@@ -1,5 +1,5 @@
 <test> : include
 
-<**/*.{ml,mli,native,byte}> : use_denest, use_bigarray, use_gsl
+<**/*.{ml,mli,native,byte}> : use_denest, use_bigarray, use_gsl, debug
 
 <test/*.{ml,mli,native,byte}> : use_unix, use_oUnit
