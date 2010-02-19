@@ -1,0 +1,5 @@
+<test> : include
+
+<**/*.{ml,mli,native,byte}> : use_denest, use_bigarray, use_gsl
+
+<test/*.{ml,mli,native,byte}> : use_unix, use_oUnit
