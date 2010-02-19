@@ -13,7 +13,7 @@ let test_sigma () =
   let s_mu = std ~mu:mu xs and 
       s = std xs in 
     assert_equal_float ~msg:"with and without ~mu argument" s s_mu;
-    assert_equal_float ((sqrt 5.0)/.2.0) s
+    assert_equal_float (sqrt (5.0/.3.0)) s
 
 let tests = "stats.ml tests" >:::
   ["mean test" >:: test_mean;

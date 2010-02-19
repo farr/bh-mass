@@ -17,4 +17,4 @@ let std ?mu xs =
       let tmp = xs.(i) -. mu in 
         std := !std +. tmp*.tmp
     done;
-    sqrt (!std/.(float_of_int n))
+    sqrt (!std/.(float_of_int (n-1)))
