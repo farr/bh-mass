@@ -1,13 +1,28 @@
 (** Assuming that the underlying mass distribution is a Gaussian, MCMC
-    the Gaussian parameters. *)
+    the Gaussian parameters.  The program expects on stdin the
+    measurements of the masses; each measurement is a pair of real
+    numbers: one mass and one standard deviation of measurement error
+    around that mass.  Given a measured mass, m, and standard
+    deviation, sigma, it is assumed that the true mass of the black
+    hole being observed has a Gaussian probability distribution with
+    mean m and standard deviation sigma. 
+
+    The program outputs to stdout MCMC samples of the underlying
+    distribution's mean and standard deviation.  The output begins
+    with a comment line (starting with a #) describing the layout: one
+    column for the mean, one column for the standard deviation, one
+    column for the log of the likelihood of those parameters, and one
+    column for the log of the prior of those parameters.
+
+*)
 
 open Stats
 
 type state = {mu : float;
               sigma : float}
 
-let nsamp = ref 100
-let nout = ref 1
+let nsamp = ref 1000000
+let nout = ref 100
 let nbin = ref 1000
 let mumin = ref 0.0 
 let mumax = ref 100.0
@@ -69,7 +84,7 @@ let propose sample_sigma sample_n {mu = mu; sigma = sigma} =
 
 let log_prior {mu = mu; sigma = sigma} = 
   if !mumin <= mu && mu <= !mumax &&
-     !sigmamin <= sigma && sigma <= !sigmamax then 
+    !sigmamin <= sigma && sigma <= !sigmamax then 
       ~-.((log (!sigmamax -. !sigmamin)) +. (log (!mumax -. !mumin)))
   else
     neg_infinity
