@@ -17,6 +17,7 @@
 *)
 
 open Stats
+open Read
 
 type state = {mu : float;
               sigma : float}
@@ -55,23 +56,6 @@ let options =
     Arg.Set_float sigmamax,
     Printf.sprintf "maximum mass std-dev: default %g" !sigmamax)]
 
-let read_msigmas () = 
-  let mss = ref [] in 
-    try
-      while true do 
-        let m = Scanf.scanf " %g " (fun x -> x) and
-            sigma = Scanf.scanf " %g " (fun x -> x) in 
-          mss := (m,sigma) :: !mss
-      done;
-      Array.of_list (List.rev !mss)
-    with 
-      | End_of_file -> Array.of_list (List.rev !mss)
-
-let split_mss mss = 
-  let ms = Array.map fst mss and 
-      sigmas = Array.map snd mss in 
-    (ms,sigmas)
-
 let random_between a b = 
   let delta = b -. a in 
     a +. (Random.float delta)
@@ -106,12 +90,13 @@ let log_likelihood ms sigmas {mu = mu; sigma = sigma} =
 let _ = 
   Random.self_init (); (* Should come before arg parsing so that arg seed can re-seed RNG if necessary. *)
   Arg.parse options (fun _ -> ()) "gaussian.{native,byte} OPTIONS ...";
-  let (ms,sigmas) = split_mss (read_msigmas ()) in 
+  let (ms,sigmas) = read_msigmas stdin in 
     Array.iteri
       (fun i m -> 
          let sigma = sigmas.(i) in 
-           Printf.printf "m = %g, sigma = %g\n" m sigma)
+           Printf.eprintf "m = %g, sigma = %g\n" m sigma)
       ms;
+    flush stderr;
   let sample_n = float_of_int (Array.length ms) and 
       sample_sigma = std ms in 
     Printf.printf "# mu sigma log_like log_prior\n";
