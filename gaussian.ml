@@ -13,7 +13,6 @@
     column for the mean, one column for the standard deviation, one
     column for the log of the likelihood of those parameters, and one
     column for the log of the prior of those parameters.
-
 *)
 
 open Stats
