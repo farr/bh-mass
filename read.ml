@@ -3,6 +3,17 @@ let split_mss mss =
       sigmas = Array.map snd mss in 
     (ms,sigmas)
 
+let call_with_input_file file f = 
+  let inp = open_in file in 
+    try
+      let result = f inp in 
+        close_in inp;
+        result
+    with 
+      | x -> 
+          close_in inp;
+          raise x
+
 let read_msigmas chan = 
   let mss = ref [] in 
     try
@@ -14,3 +25,23 @@ let read_msigmas chan =
       split_mss (Array.of_list (List.rev !mss))
     with 
       | End_of_file -> split_mss (Array.of_list (List.rev !mss))
+
+let read_mcmc_output ndim chan = 
+  let samples = ref [] in 
+    try
+      while true do 
+        let p = Array.make ndim 0.0 in 
+          for i = 0 to ndim - 1 do 
+            Scanf.fscanf chan " %g " (fun x -> p.(i) <- x)
+          done;
+          let sample = 
+            Scanf.fscanf chan " %g %g "
+              (fun ll lp -> 
+                 {Mcmc.value = p;
+                  like_prior = {Mcmc.log_likelihood = ll;
+                                log_prior = lp}}) in 
+            samples := sample :: !samples
+      done;
+      List.rev !samples
+    with
+      | End_of_file -> List.rev !samples
