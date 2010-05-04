@@ -14,8 +14,8 @@
 
 open Read
 
-let mmin = ref 0.0 
-let mmax = ref 30.0 
+let mmin = ref 3.0
+let mmax = ref 16.0
 let nsamp = ref 1000000
 let nburnin = ref 1000
 let nout = ref 100
@@ -60,7 +60,10 @@ let log_factorial n =
 
 let log_prior (s : state) = 
   let n = Array.length s - 2 in 
-    (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin)) -. (log (float_of_int !nbin_max))
+    if !fixed_bin then 
+      (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))
+    else
+      (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))  -. (log (float_of_int !nbin_max))
 
 let log_uniform_int n = 
   ~-.(log (float_of_int n))
