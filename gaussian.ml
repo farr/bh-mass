@@ -98,7 +98,6 @@ let _ =
     flush stderr;
   let sample_n = float_of_int (Array.length ms) and 
       sample_sigma = std ms in 
-    Printf.printf "# mu sigma log_like log_prior\n";
     let start_ms = {mu = mean ms; sigma = sample_sigma} in 
     let current_state = ref {Mcmc.value = start_ms;
                              like_prior = {Mcmc.log_likelihood = log_likelihood ms sigmas start_ms;
@@ -114,9 +113,6 @@ let _ =
       done;
       for i = 1 to !nsamp do 
         current_state := next_state !current_state;
-        let {value = {mu = mu; sigma = sigma};
-             Mcmc.like_prior = {Mcmc.log_likelihood = ll;
-                                log_prior = lp}} = !current_state in 
           if i mod !nout = 0 then 
-            Printf.printf "%g %g %g %g\n" mu sigma ll lp
+            Read_write.write_sample (fun {mu = mu; sigma = s} -> [| mu; s |]) stdout !current_state
       done
