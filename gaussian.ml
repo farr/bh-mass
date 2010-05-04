@@ -24,10 +24,10 @@ type state = {mu : float;
 let nsamp = ref 1000000
 let nout = ref 100
 let nbin = ref 1000
-let mumin = ref 0.0 
-let mumax = ref 100.0
-let sigmamin = ref 0.0 
-let sigmamax = ref 100.0
+let mumin = ref 3.0
+let mumax = ref 16.0
+let sigmamin = ref 0.0
+let sigmamax = ref 39.0
 
 let options = 
   [("-nsamp",
@@ -35,7 +35,7 @@ let options =
     Printf.sprintf "number of samples: default %d" !nsamp);
    ("-nout",
     Arg.Set_int nout,
-    Printf.sprintf "number of samples to take before output: default %d" !nout);
+    Printf.sprintf "number of samples to take between output: default %d" !nout);
    ("-nburn",
     Arg.Set_int nbin,
     Printf.sprintf "number of samples to discard initially: default %d" !nbin);
