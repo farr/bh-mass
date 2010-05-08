@@ -9,8 +9,7 @@ let test_mean () =
 
 let test_sigma () = 
   let xs = [|1.0; 2.0; 3.0; 4.0|] in 
-  let mu = mean xs in 
-  let s_mu = std ~mu:mu xs and 
+  let s_mu = std xs and 
       s = std xs in 
     assert_equal_float ~msg:"with and without ~mu argument" s s_mu;
     assert_equal_float (sqrt (5.0/.3.0)) s

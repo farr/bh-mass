@@ -233,7 +233,7 @@ let increase_dimension (bins : state) =
   else begin
     let iadd = Random.int (Array.length bins - 1) in 
       (* Add a bin at a random location between iadd and iadd+1 *)
-    let new_bins = Array.make (Array.length bins + 1) 0.0 in 
+    let new_bins = Array.make (Array.length bins + 1) 0.0 in  
       Array.blit bins 0 new_bins 0 (iadd+1);
       new_bins.(iadd+1) <- random_between bins.(iadd) bins.(iadd+1);
       Array.blit bins (iadd+1) new_bins (iadd+2) (Array.length new_bins - iadd - 2);
