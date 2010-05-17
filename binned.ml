@@ -244,7 +244,10 @@ let increase_dimension_log_jump_prob (a : state) b =
   if !fixed_bin then 
     0.0
   else if nbin a >= !nbin_max then 
-    0.0 
+    if a = b then 
+      0.0 
+    else
+      neg_infinity
   else begin
     let nba = nbin a and 
         nbb = nbin b in 

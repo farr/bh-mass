@@ -4,3 +4,5 @@ _build
 *.byte
 *.dat
 *.nb
+*.mcmc
+*~
