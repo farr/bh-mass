@@ -69,7 +69,8 @@ let log_prior (s : state) =
       else
         (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))  -. (log (float_of_int !nbin_max))
   else 
-    0.0
+    let n = Array.length s - 2 in 
+      ~-.(float_of_int n)*.(log (!mmax -. !mmin))
           
 let log_uniform_int n = 
   ~-.(log (float_of_int n))
