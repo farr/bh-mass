@@ -24,10 +24,10 @@ type state = {mu : float;
 let nsamp = ref 1000000
 let nout = ref 100
 let nbin = ref 1000
-let mumin = ref 3.0
-let mumax = ref 16.0
+let mumin = ref 1.0
+let mumax = ref 26.0
 let sigmamin = ref 0.0
-let sigmamax = ref 39.0
+let sigmamax = ref 26.0
 
 let options = 
   [("-nsamp",

@@ -14,10 +14,10 @@
 
 open Read
 
-let mmin = ref 3.0
-let mmax = ref 16.0
+let mmin = ref 1.0
+let mmax = ref 26.0
 let nsamp = ref 1000000
-let nburnin = ref 1000
+let nburnin = ref 10000
 let nout = ref 100
 let nbin_max = ref 10
 let fixed_bin = ref false
