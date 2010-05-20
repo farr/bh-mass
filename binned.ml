@@ -22,6 +22,7 @@ let nout = ref 100
 let nbin_max = ref 10
 let fixed_bin = ref false
 let nfixedbin = ref (-1)
+let smaller_prior = ref false
 
 let options = 
   [("-mmin",
@@ -45,7 +46,9 @@ let options =
    ("-nbinmax", Arg.Set_int nbin_max,
     Printf.sprintf "max number of bins (default %d)" !nbin_max);
    ("-fixedbin", Arg.Int (fun i -> fixed_bin := true; nfixedbin := i),
-    "fixed number of bins (normally, bins vary)")]
+    "fixed number of bins (normally, bins vary)");
+   ("-smaller-prior", Arg.Set smaller_prior, 
+    Printf.sprintf "use a smaller prior, assiging 1/N! prior mass to N-bin model (default %b)" !smaller_prior)]
    
 type state = float array
 
@@ -59,12 +62,15 @@ let log_factorial n =
     !lf +. 0.0
 
 let log_prior (s : state) = 
-  let n = Array.length s - 2 in 
-    if !fixed_bin then 
-      (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))
-    else
-      (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))  -. (log (float_of_int !nbin_max))
-
+  if not !smaller_prior then 
+    let n = Array.length s - 2 in 
+      if !fixed_bin then 
+        (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))
+      else
+        (log_factorial n) -. (float_of_int n)*.(log (!mmax -. !mmin))  -. (log (float_of_int !nbin_max))
+  else 
+    0.0
+          
 let log_uniform_int n = 
   ~-.(log (float_of_int n))
 
@@ -117,10 +123,14 @@ let random_bins_jp (a : state) =
 
 let random_bins_log_jump_prob (a : state) b = 
   let n = Array.length a in 
-    if Array.length b = n then 
+    if Array.length b = n then begin
       (* Could be a random jump. *)
-      log_prior b
-    else
+      let tmp = !smaller_prior in 
+        smaller_prior := false;
+        let res = log_prior b in 
+          smaller_prior := tmp;
+          res
+    end else
       (* zero chance of a jump. *)
       neg_infinity
 
