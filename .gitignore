@@ -5,4 +5,7 @@ _build
 *.dat
 *.nb
 *.mcmc
+*.agr
+*.eps
+*.pdf
 *~
