@@ -185,7 +185,14 @@ let _ =
   let samples = Masses.generate_samples !nmsamp in
   let log_likelihood = log_likelihood samples in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_propose log_jump_prob in 
-  let s0 = [|!mmin; !mmax|] in 
+  let s0 = 
+    if !fixedbin then 
+      Array.init (!nbin + 1) 
+        (fun i -> 
+          if i = 0 then !mmin else if i = 1 then !mmax else Stats.draw_uniform !mmin !mmax) 
+    else
+      [|!mmin; !mmax|] in
+    Array.fast_sort compare_float s0;
   let current = ref {Mcmc.value = s0;
                      like_prior = {Mcmc.log_likelihood = log_likelihood s0;
                                    Mcmc.log_prior = log_prior s0}} in 
