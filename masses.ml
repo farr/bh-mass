@@ -14,13 +14,11 @@ let pi = 3.1415926535897932385
 let rad_of_deg d = 
   d *. pi /. 180.0
 
-let rec draw_isotropic () = 
-  let u = Random.float 2.0 -. 1.0 in 
-  let i = acos u in 
-    if i < rad_of_deg 10.0 then 
-      draw_isotropic ()
-    else
-      i
+let draw_isotropic imin imax = 
+  let cmin = cos imax and 
+      cmax = cos imin in 
+  let c = cmin +. (Random.float (cmax -. cmin)) in 
+  acos c
 
 (* Greiner, Cuby, McCaughrean, 2001.  (Mass ratio derived from quoted masses!) *)
 let grs_1915 = 
@@ -41,21 +39,21 @@ let cyg_x1 =
   make_mass_generator
     (fun () -> draw_gaussian 0.251 0.007)
     (fun () -> draw_gaussian 2.778 0.386)
-    (fun () -> draw_uniform (rad_of_deg 23.0) (rad_of_deg 38.0))
+    (fun () -> draw_isotropic (rad_of_deg 23.0) (rad_of_deg 38.0))
 
 (* Orosz, McClintock, Remillard, Corbel, 2004. *)
 let xte_j1650 = 
   make_mass_generator
     (fun () -> draw_gaussian 2.73 0.56)
     (fun () -> draw_uniform 0.0 0.5) (* No constraints on mass ratio; use uniform for broad. *)
-    (fun () -> draw_uniform (rad_of_deg 50.0) (rad_of_deg 80.0)) (* If no disk light, 50 +/- 3 *)
+    (fun () -> draw_isotropic (rad_of_deg 50.0) (rad_of_deg 80.0)) (* If no disk light, 50 +/- 3 *)
 
 (* Filippenko, et al., 1999. Also Shahbaz et. al. 1996 (for i). *)
 let grs_1009 = 
   make_mass_generator
     (fun () -> draw_gaussian 3.17 0.12)
     (fun () -> draw_gaussian 0.137 0.015)
-    (fun () -> draw_uniform (rad_of_deg 37.0) (rad_of_deg 80.0))
+    (fun () -> draw_isotropic (rad_of_deg 37.0) (rad_of_deg 80.0))
 
 (* Orosz Nature paper. *)
 let m33_x7 = 
@@ -133,7 +131,7 @@ let gs_1354 =
   make_mass_generator
     (fun () -> draw_gaussian 5.73 0.29)
     (fun () -> draw_gaussian 0.12 0.04)
-    (fun () -> draw_uniform (rad_of_deg 50.0) (rad_of_deg 80.0))
+    (fun () -> draw_isotropic (rad_of_deg 50.0) (rad_of_deg 80.0))
 
 (* (\* Hynes 2003. Isotropic inclination. *\) *)
 (* let gx_339 =  *)
