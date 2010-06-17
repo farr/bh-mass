@@ -27,7 +27,7 @@ let options =
    ("-o", Arg.Set_string outfile, 
     sprintf "output file for the mcmc (default %s)" !outfile);
    ("-overwrite", Arg.Set overwrite,
-    sprintf "overwrite the pre-existing MCMC samples in output file (default %b)" !overwrite)]
+    "overwrite the pre-existing MCMC samples in output file")]
 
 let log_likelihood msamples = function 
   | [|mu; sigma|] -> 
