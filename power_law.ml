@@ -8,7 +8,7 @@ let nmcmc = ref 10000
 let nskip = ref 100
 let alphamin = ref (-0.8)
 let alphamax = ref 4.0
-let outfile = ref "power_law.mcmc"
+let outfile = ref "power-law.mcmc"
 let overwrite = ref false
 
 let options = 
