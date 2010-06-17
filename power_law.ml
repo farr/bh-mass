@@ -6,7 +6,7 @@ let mmax = ref 40.0
 let nbin = ref 10000
 let nmcmc = ref 10000
 let nskip = ref 100
-let alphamin = ref (-4.0)
+let alphamin = ref (-0.8)
 let alphamax = ref 4.0
 let outfile = ref "power_law.mcmc"
 let overwrite = ref false
@@ -129,7 +129,7 @@ let _ =
   let next = 
     Mcmc.make_mcmc_sampler 
       (fun x -> log_likelihood msamples x) log_prior jump_proposal log_jump_probability in
-  let s0 = [|7.0; 10.0; 0.0|] in 
+  let s0 = [|max 7.0 !mmin; min 10.0 !mmax; 0.5*.(!alphamin +. !alphamax)|] in 
   let current = ref {Mcmc.value = s0;
                      like_prior = {Mcmc.log_likelihood = log_likelihood msamples s0;
                                    log_prior = log_prior s0}} in
