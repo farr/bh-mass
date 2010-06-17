@@ -81,7 +81,7 @@ let log_factorial n =
     !sum
 
 let log_prior bins = 
-  let log_bin_factor = if !fixedbin then 0.0 else ~-.(log (float_of_int (!nbinmax - 1))) in
+  let log_bin_factor = if !fixedbin then 0.0 else ~-.(log (float_of_int !nbinmax)) in
   let n = Array.length bins in 
     (log_factorial n) +. log_bin_factor -. (float_of_int n)*.(log (!mmax -. !mmin))
 
