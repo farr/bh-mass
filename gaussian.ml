@@ -29,6 +29,10 @@ let options =
    ("-overwrite", Arg.Set overwrite,
     "overwrite the pre-existing MCMC samples in output file")]
 
+let gaussian mu sigma x = 
+  let d = mu -. x in 
+  (exp ~-.((d*.d)/.(2.0*.sigma*.sigma))) /. (2.5066282746310005024 *. sigma)
+
 let log_likelihood msamples = function 
   | [|mu; sigma|] -> 
     List.fold_left
@@ -37,7 +41,7 @@ let log_likelihood msamples = function
             nsamples = Array.length msamples in
           for i = 0 to nsamples - 1 do
             let m = msamples.(i) in 
-              overlap := !overlap +. (exp (log_gaussian mu sigma m))
+              overlap := !overlap +. gaussian mu sigma m
           done;
           ll +. (log (!overlap /. (float_of_int nsamples))))
       0.0
