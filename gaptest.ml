@@ -5,6 +5,7 @@ type dist =
   | Histogram
   | Gaussian
   | Power_law
+  | Exponential
 
 let which_dist = ref None
 let filename = ref ""
@@ -18,6 +19,8 @@ let options =
     "use a gaussian mcmc output in the given file");
    ("-power-law", Arg.String (fun s -> which_dist := Power_law; filename := s),
     "use a power-law mcmc output in the given file");
+   ("-exponential", Arg.String (fun s -> which_dist := Exponential; filename := s),
+    "use an exponential mcmc output in the given file");
    ("-mgap", Arg.Set_float gap_bdy,
     sprintf "maximum mass of the gap region (default %g)" !gap_bdy);
    ("-o", Arg.Set_string outfile, "output filename")]
@@ -57,6 +60,14 @@ let power_law_gap_overlap = function
         ((!gap_bdy)**ap1 -. mminap1) /. (mmax**ap1 -. mminap1)
   | _ -> raise (Failure "power_law_gap_overlap: bad state")
 
+let exponential_gap_overlap = function 
+  | [|mmin; msc|] -> 
+    if !gap_bdy >= mmin then 
+      1.0 -. (exp ((mmin -. !gap_bdy) /. msc))
+    else
+      0.0
+  | _ -> raise (Invalid_argument "exponential_gap_overlap: bad state")
+
 let compare_float (x : float) y = Pervasives.compare x y
 
 let _ = 
@@ -72,6 +83,8 @@ let _ =
           Array.map (fun {Mcmc.value = x} -> gauss_gap_overlap x) mcmcs
         | Power_law -> 
           Array.map (fun {Mcmc.value = x} -> power_law_gap_overlap x) mcmcs 
+        | Exponential -> 
+          Array.map (fun {Mcmc.value = x} -> exponential_gap_overlap x) mcmcs
         | _ -> eprintf "You must specify some distribution via a command line argument.\n";
           exit 1 in
     let out = open_out !outfile in 
