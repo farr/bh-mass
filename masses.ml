@@ -11,14 +11,16 @@ let make_mass_generator draw_f draw_q draw_i =
 
 let pi = 3.1415926535897932385
 
-let draw_isotropic () = 
-  let u = Random.float 2.0 -. 1.0 in 
-  let phi = acos u in
-  let phi = if phi <= pi /. 2.0 then phi else pi - phi in 
-    abs_float (pi/2.0 -. phi)
-
 let rad_of_deg d = 
   d *. pi /. 180.0
+
+let rec draw_isotropic () = 
+  let u = Random.float 2.0 -. 1.0 in 
+  let i = acos u in 
+    if i < rad_of_deg 10.0 then 
+      draw_isotropic ()
+    else
+      i
 
 (* Greiner, Cuby, McCaughrean, 2001.  (Mass ratio derived from quoted masses!) *)
 let grs_1915 = 
@@ -133,32 +135,31 @@ let gs_1354 =
     (fun () -> draw_gaussian 0.12 0.04)
     (fun () -> draw_uniform (rad_of_deg 50.0) (rad_of_deg 80.0))
 
-(* Hynes 2003. Isotropic inclination. *)
-let gx_339 = 
-  make_mass_generator
-    (fun () -> draw_gaussian 5.8 0.5)
-    (fun () -> draw_uniform 0.0 0.08)
-    draw_isotropic
+(* (\* Hynes 2003. Isotropic inclination. *\) *)
+(* let gx_339 =  *)
+(*   make_mass_generator *)
+(*     (fun () -> draw_gaussian 5.8 0.5) *)
+(*     (fun () -> draw_uniform 0.0 0.08) *)
+(*     draw_isotropic *)
 
-(* Charles and Coe 2006 (book). *)
-let nova_oph_77 = 
-  make_mass_generator
-    (fun () -> draw_gaussian 4.86 0.13)
-    (fun () -> draw_uniform 0.0 0.053)
-    draw_isotropic
+(* (\* Charles and Coe 2006 (book). *\) *)
+(* let nova_oph_77 =  *)
+(*   make_mass_generator *)
+(*     (fun () -> draw_gaussian 4.86 0.13) *)
+(*     (fun () -> draw_uniform 0.0 0.053) *)
+(*     draw_isotropic *)
 
-(* Charles and Coe 2006 (book). *)
-let gs_2000 = 
-  make_mass_generator
-    (fun () -> draw_gaussian 5.01 0.12)
-    (fun () -> draw_uniform 0.035 0.053)
-    draw_isotropic
+(* (\* Charles and Coe 2006 (book). *\) *)
+(* let gs_2000 =  *)
+(*   make_mass_generator *)
+(*     (fun () -> draw_gaussian 5.01 0.12) *)
+(*     (fun () -> draw_uniform 0.035 0.053) *)
+(*     draw_isotropic *)
 
 let generators = 
   [grs_1915; xte_j1118; cyg_x1; xte_j1650; grs_1009; 
    m33_x7; a0620; gro_j0422; nova_mus_1991; gro_j1655; v4641_sgr;
-   u4_1543; xte_j1550; v4641_sgr; gs_2023; gs_1354; gx_339;
-   nova_oph_77; gs_2000]
+   u4_1543; xte_j1550; v4641_sgr; gs_2023; gs_1354]
 
 let generate_samples nsamp = 
   List.map (fun gen -> Array.init nsamp (fun _ -> gen ())) generators

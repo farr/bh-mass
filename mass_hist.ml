@@ -1,7 +1,7 @@
 open Printf
 
 let nsamp = ref 1000
-let outfile = ref "/tmp/massdist.dat"
+let outfile = ref "masses.dat"
 
 let options = 
   [("-nsamp", Arg.Set_int nsamp,
