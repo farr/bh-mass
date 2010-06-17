@@ -1,6 +1,6 @@
 open Printf
 
-let nbinmax = ref 40
+let nbinmax = ref 5
 let fixedbin = ref false
 let nbin = ref 1
 let mmin = ref 0.0
