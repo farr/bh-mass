@@ -157,7 +157,12 @@ let gs_1354 =
 let generators = 
   [grs_1915; xte_j1118; cyg_x1; xte_j1650; grs_1009; 
    m33_x7; a0620; gro_j0422; nova_mus_1991; gro_j1655; v4641_sgr;
-   u4_1543; xte_j1550; v4641_sgr; gs_2023; gs_1354]
+   u4_1543; xte_j1550; gs_2023; gs_1354]
+
+let names = 
+  ["grs-1915"; "xte-j1118"; "cyg-x1"; "xte-j1650";
+   "grs-1009"; "m33-x7"; "a0620"; "gro-j0422"; "nova-mus-1991";
+   "gro-j1655"; "v4641-sgr"; "u4-1543"; "xte-j1550"; "gs-2023"; "gs-1354"]
 
 let generate_samples nsamp = 
   List.map (fun gen -> Array.init nsamp (fun _ -> gen ())) generators

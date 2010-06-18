@@ -18,4 +18,12 @@ let _ =
     List.iter 
       (fun samps -> Array.iter (fun m -> fprintf out "%g\n" m) samps)
       samples;
-    close_out out
+    close_out out;
+    List.iter2
+      (fun name samps -> 
+        let fname = "masses-" ^ name ^ ".dat" in 
+        let out = open_out fname in 
+          Array.iter (fun m -> fprintf out "%g\n" m) samps;
+          close_out out)
+      Masses.names samples
+          
