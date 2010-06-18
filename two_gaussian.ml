@@ -52,7 +52,7 @@ let log_prior = function
     if mu1 > mu2 then 
       neg_infinity
     else
-      -0.69314718055994530942 -. 4.0*.(log (!mmax -. !mmin)) (* First factor is log(1/2). *)
+      0.69314718055994530942 -. 4.0*.(log (!mmax -. !mmin)) (* First factor is log(2). *)
   | _ -> raise (Invalid_argument "log_prior: bad state")
 
 let jump_proposal = function 
