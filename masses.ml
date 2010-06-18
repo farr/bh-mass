@@ -74,7 +74,7 @@ let a0620 =
 let gro_j0422 = 
   make_mass_generator
     (fun () -> draw_gaussian 1.13 0.09)
-    (fun () -> draw_gaussian 0.116 0.083)
+    (fun () -> draw_uniform 0.076 0.31)
     (fun () -> draw_gaussian (rad_of_deg 45.0) (rad_of_deg 2.0))
 
 (* Gelino, Harrison, McNamara, 2001. *)

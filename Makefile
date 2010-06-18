@@ -1,4 +1,4 @@
-# Makefile to run all the MCMC's available.
+# Makefile to run all the MCMC's available.  Run with -j <n-processors> for parallel speedup. 
 
 MCMCS = exp-cutoff gaussian histogram histogram-fixed power-law power-law-neg two-gaussian
 
@@ -20,9 +20,9 @@ histogram:
 .PHONY: histogram-fixed
 histogram-fixed:
 	for i in {1..5}; do \
-		echo "Running with $$i bins..." \
-		_build/histogram.native -fixedbin -nbin $$i -o histogram-$${i}bin.mcmc \
-	done
+		echo "Running with $$i bins..."; \
+		_build/histogram.native -fixedbin -nbin $$i -o histogram-$${i}bin.mcmc; \
+	done;
 
 .PHONY: power-law
 power-law:
