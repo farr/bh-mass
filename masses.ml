@@ -91,13 +91,6 @@ let gro_j1655 =
     (fun () -> draw_gaussian 0.3663 0.04025)
     (fun () -> draw_gaussian (rad_of_deg 70.2) (rad_of_deg 1.9))
 
-(* Orosz et al, 2001. *)
-let v4641_sgr = 
-  make_mass_generator
-    (fun () -> draw_gaussian 2.74 0.04)
-    (fun () -> draw_gaussian 0.6667 0.0356)
-    (fun () -> draw_gaussian (rad_of_deg 65.0) (rad_of_deg 5.0))
-
 (* Orosz 2003 (IAU Proceedings). *)
 let u4_1543 = 
   make_mass_generator
@@ -140,29 +133,30 @@ let gs_1354 =
 (*     (fun () -> draw_uniform 0.0 0.08) *)
 (*     draw_isotropic *)
 
-(* (\* Charles and Coe 2006 (book). *\) *)
-(* let nova_oph_77 =  *)
-(*   make_mass_generator *)
-(*     (fun () -> draw_gaussian 4.86 0.13) *)
-(*     (fun () -> draw_uniform 0.0 0.053) *)
-(*     draw_isotropic *)
+(* Charles and Coe 2006 (book). *)
+let nova_oph_77 =
+  make_mass_generator
+    (fun () -> draw_gaussian 4.86 0.13)
+    (fun () -> draw_uniform 0.0 0.053)
+    (fun () -> draw_isotropic 60.0 80.0)
 
-(* (\* Charles and Coe 2006 (book). *\) *)
-(* let gs_2000 =  *)
-(*   make_mass_generator *)
-(*     (fun () -> draw_gaussian 5.01 0.12) *)
-(*     (fun () -> draw_uniform 0.035 0.053) *)
-(*     draw_isotropic *)
+(* Charles and Coe 2006 (book). *)
+let gs_2000 =
+  make_mass_generator
+    (fun () -> draw_gaussian 5.01 0.12)
+    (fun () -> draw_uniform 0.035 0.053)
+    (fun () -> draw_isotropic (rad_of_deg 43.0) (rad_of_deg 74.0))
 
 let generators = 
   [grs_1915; xte_j1118; cyg_x1; xte_j1650; grs_1009; 
    m33_x7; a0620; gro_j0422; nova_mus_1991; gro_j1655; v4641_sgr;
-   u4_1543; xte_j1550; gs_2023; gs_1354]
+   u4_1543; xte_j1550; gs_2023; gs_1354; nova_oph_77; gs_2000]
 
 let names = 
   ["grs-1915"; "xte-j1118"; "cyg-x1"; "xte-j1650";
    "grs-1009"; "m33-x7"; "a0620"; "gro-j0422"; "nova-mus-1991";
-   "gro-j1655"; "v4641-sgr"; "u4-1543"; "xte-j1550"; "gs-2023"; "gs-1354"]
+   "gro-j1655"; "v4641-sgr"; "u4-1543"; "xte-j1550"; "gs-2023"; "gs-1354";
+   "nova-oph-77"; "gs-2000"]
 
 let generate_samples nsamp = 
   List.map (fun gen -> Array.init nsamp (fun _ -> gen ())) generators
