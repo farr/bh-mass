@@ -13,7 +13,7 @@ rule() {
     case $1 in
         clean) ocb -clean;;
         all) ocb all.otarget;;
-        *) echo "Unknown action ($1)"
+        *) ocb $1;;
     esac;
 }
 
