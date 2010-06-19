@@ -6,8 +6,8 @@ let mmax = ref 40.0
 let nbin = ref 10000
 let nmcmc = ref 10000
 let nskip = ref 100
-let alphamin = ref (-0.8)
-let alphamax = ref 4.0
+let alphamin = ref (-8.0)
+let alphamax = ref 8.0
 let outfile = ref "power-law.mcmc"
 let overwrite = ref false
 
