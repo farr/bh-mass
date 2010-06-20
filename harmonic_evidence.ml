@@ -36,11 +36,9 @@ let _ =
           done;
             Ev.evidence_harmonic_mean bsamples) in 
       Array.fast_sort (fun (x : float) y -> Pervasives.compare x y) evs;
-      let ind910 = int_of_float ((float_of_int !nsamp) *. 0.9) and
+      let ind90 = int_of_float ((float_of_int !nsamp) *. 0.9) and
           ind10 = int_of_float ((float_of_int !nsamp) *. 0.1) in
       let output = if !to_file then open_out !outfile else stdout in 
-      let deltap = (evs.(ind910) -. ev) and 
-          deltam = (ev -. (evs.(ind10))) in
-        fprintf output "%g %g %g\n" ev deltap deltam;
+        fprintf output "%g %g %g\n" ev evs.(ind10) evs.(ind90);
         if !to_file then close_out output
       

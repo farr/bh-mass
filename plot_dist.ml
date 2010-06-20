@@ -119,6 +119,6 @@ let _ =
       let y = pts.(n/2).(i) and 
           ymin = pts.(n/10).(i) and 
           ymax = pts.((n*9)/10).(i) in 
-        fprintf out "%g %g %g %g\n" xs.(i) y (ymax-.y) (y-.ymin)
+        fprintf out "%g %g %g %g\n" xs.(i) y ymin ymax
     done;
     close_out out
