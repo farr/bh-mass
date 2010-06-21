@@ -14,3 +14,4 @@ _build
 *.ev
 *.bds
 *.dist
+*.direct

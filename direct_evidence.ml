@@ -26,19 +26,7 @@ let _ =
   Arg.parse options (fun _ -> ()) "direct_evidence.{byte,native} OPTIONS ...";
   let inp = if !have_input_file then open_in !input_file else stdin in 
   let samples = Read_write.read (fun x -> x) inp in 
-  let bsamples = Array.copy samples in 
-  let nsamp = Array.length bsamples in 
     if !have_input_file then close_in inp;
-    let ev = Ev.evidence_direct samples in
-    let evs = Array.make !nbstrap 0.0 in 
-      for i = 0 to !nbstrap - 1 do 
-        for i = 0 to nsamp - 1 do 
-          bsamples.(i) <- samples.(Random.int nsamp)
-        done;
-        evs.(i) <- Ev.evidence_direct bsamples
-      done;
-      Array.fast_sort compare_float evs;
-      let out = if !have_output_file then open_out !output_file else stdout in 
-        fprintf out "%g %g %g\n"
-          ev evs.(!nbstrap/10) evs.((!nbstrap*9)/10);
-        if !have_output_file then close_out out
+    let out = if !have_output_file then open_out !output_file else stdout in 
+      fprintf out "%g\n" (Ev.evidence_direct samples);
+      if !have_output_file then close_out out

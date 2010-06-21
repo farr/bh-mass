@@ -8,14 +8,14 @@ all:
 	ocamlbuild all.otarget
 
 .PHONY: runs
-runs: $(MCMCS)
+runs: all $(MCMCS)
 
 .PHONY: clean
 clean:
 	ocamlbuild -clean
 
 .PHONY: post-processing
-post-processing: $(POST_MCMCS)
+post-processing: all $(POST_MCMCS)
 
 .PHONY: plots
 plots: all
@@ -63,12 +63,14 @@ post-exp-cutoff:
 	_build/harmonic_evidence.native -i exp-cutoff.mcmc -o exp-cutoff.mcmc.ev
 	_build/dist.native -exponential exp-cutoff.mcmc -o exp-cutoff.mcmc.dist
 	_build/bounds.native -exponential exp-cutoff.mcmc -o exp-cutoff.mcmc.bds
+	_build/direct_evidence.native -i exp-cutoff.mcmc -o exp-cutoff.mcmc.ev.direct
 
 .PHONY: post-gaussian
 post-gaussian:
 	_build/harmonic_evidence.native -i gaussian.mcmc -o gaussian.mcmc.ev
 	_build/dist.native -gaussian gaussian.mcmc -o gaussian.mcmc.dist
 	_build/bounds.native -gaussian gaussian.mcmc -o gaussian.mcmc.bds
+	_build/direct_evidence.native -i gaussian.mcmc -o gaussian.mcmc.ev.direct
 
 .PHONY: post-histogram
 post-histogram:
@@ -79,9 +81,10 @@ post-histogram:
 .PHONY: post-histogram-fixed
 post-histogram-fixed:
 	for i in {1..5}; do \
-		_build/harmonic_evidence.native -i histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.ev; \
-		_build/dist.native -histogram histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.dist; \
-		_build/bounds.native -histogram histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.bds; \
+		_build/harmonic_evidence.native -i histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.ev; 
+		_build/dist.native -histogram histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.dist; 
+		_build/bounds.native -histogram histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.bds; 
+		_build/direct_evidence.native -i histogram-$${i}bin.mcmc -o histogram-$${i}bin.mcmc.ev.direct; \
 	done;
 
 .PHONY: post-power-law
@@ -89,9 +92,11 @@ post-power-law:
 	_build/harmonic_evidence.native -i power-law.mcmc -o power-law.mcmc.ev
 	_build/dist.native -power-law power-law.mcmc -o power-law.mcmc.dist
 	_build/bounds.native -power-law power-law.mcmc -o power-law.mcmc.bds
+	_build/direct_evidence.native -i power-law.mcmc -o power-law.mcmc.ev.direct
 
 .PHONY: post-two-gaussian
 post-two-gaussian:
 	_build/harmonic_evidence.native -i two-gaussian.mcmc -o two-gaussian.mcmc.ev
 	_build/dist.native -two-gaussian two-gaussian.mcmc -o two-gaussian.mcmc.dist
 	_build/bounds.native -two-gaussian two-gaussian.mcmc -o two-gaussian.mcmc.bds
+	_build/direct_evidence.native -i two-gaussian.mcmc -o two-gaussian.mcmc.ev.direct
