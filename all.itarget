@@ -6,8 +6,9 @@ exp_cutoff.native
 gaussian.native
 harmonic_evidence.native
 histogram.native
-mass_hist.native
 masses.native
+mass_hist.native
+mass_plot.native
 nbin_counts.native
 power_law.native
 two_gaussian.native
