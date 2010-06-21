@@ -26,8 +26,8 @@ let read_bounds file =
 
 let plot_bounds bds title = 
   let lowbds = Array.map (fun bds -> bds.(0)) bds in 
-  let minbd = Array.fold_left min infinity lowbds and 
-      maxbd = Array.fold_left max neg_infinity lowbds in 
+  let minbd = max 0.0 (Array.fold_left min infinity lowbds) and 
+      maxbd = min 10.0 (Array.fold_left max neg_infinity lowbds) in 
   let (boxes, counts) = Mass_plot.bin_data lowbds minbd maxbd 100 in
   let high = Array.fold_left max neg_infinity counts in 
     plenv 0.0 10.0 0.0 (1.1*.high) 0 0;
