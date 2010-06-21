@@ -9,7 +9,8 @@ let dist_files =
     "histogram-1bin.mcmc.ev";
     "histogram-2bin.mcmc.ev";
     "histogram-3bin.mcmc.ev";
-    "histogram-4bin.mcmc.ev"|] (* Leave off the 5-bin histogram. *)
+    "histogram-4bin.mcmc.ev";
+    "histogram-5bin.mcmc.ev"|]
 
 let read_evidences files = 
   let n = Array.length files in 
