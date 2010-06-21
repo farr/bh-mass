@@ -10,8 +10,23 @@ all:
 .PHONY: runs
 runs: $(MCMCS)
 
+.PHONY: clean
+clean:
+	ocamlbuild -clean
+
 .PHONY: post-processing
 post-processing: $(POST_MCMCS)
+
+.PHONY: plots
+plots: all
+	_build/mass_plot.native -dev ps -o masses.ps
+	ps2pdf masses.ps
+	_build/all_masses_plot.native -dev ps -o all-masses.ps
+	ps2pdf all-masses.ps
+	_build/evidence_plot.native -dev ps -o evidence.ps
+	ps2pdf evidence.ps
+	_build/dist_plot.native -dev ps -o dist.ps
+	ps2pdf dist.ps
 
 .PHONY: exp-cutoff
 exp-cutoff:
