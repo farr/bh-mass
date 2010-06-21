@@ -31,12 +31,20 @@ let read_evidences files =
 let log10 x = 
   (log x) /. (log 10.0)
 
+let plot_name index ymins name = 
+  plptex (float_of_int index) (log10 (0.9*.ymins.(index))) 0.0 1.0 1.0 name
+
 let plot_evidences xs ys ymins ymaxs = 
   let xmin = (-1.0) and xmax = float_of_int ((Array.length xs)) and 
       ymax = Array.fold_left max neg_infinity ymaxs and 
       ymin = Array.fold_left min infinity ymins in
-    plenv xmin xmax (log10 (ymin /. 2.0)) (log10 (2.0*.ymax)) 0 20;
-    plerry xs (Array.map log10 ymins) (Array.map log10 ymaxs)
+    plenv xmin xmax (log10 (ymin /. 10.0)) (log10 (2.0*.ymax)) 0 20;
+    plerry xs (Array.map log10 ymins) (Array.map log10 ymaxs);
+    Array.iteri 
+      (fun i name -> plot_name i ymins name)
+      [|"Exp"; "Gaussian"; "Power Law"; "Two Gaussian";
+        "Hist (1-5)"; "Hist (1)"; "Hist (2)"; "Hist (3)";
+        "Hist (4)"; "Hist (5)"|]
 
 let _ = 
   plparseopts Sys.argv [PL_PARSE_FULL];
