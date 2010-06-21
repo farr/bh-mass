@@ -1,5 +1,6 @@
 all_masses_plot.native
 bounds.native
+bounds_plot.native
 dist.native
 dist_plot.native
 evidence_plot.native

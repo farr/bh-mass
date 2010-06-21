@@ -27,6 +27,8 @@ plots: all
 	ps2pdf evidence.ps
 	_build/dist_plot.native -dev ps -o dist.ps
 	ps2pdf dist.ps
+	_build/bounds_plot.native -dev ps -o bounds.ps
+	ps2pdf bounds.ps
 
 .PHONY: exp-cutoff
 exp-cutoff:
