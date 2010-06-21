@@ -36,13 +36,13 @@ let plot_masses ms title =
       mmax = min 40.0 (Array.fold_left max neg_infinity ms) in
   let (bds, cts) = Mass_plot.bin_data ms mmin mmax 100 in 
   let  height = Array.fold_left max neg_infinity cts in 
-    plenv mmin mmax 0.0 height 0 0;
+    plenv mmin mmax 0.0 (1.1*.height) 0 0;
     plbin bds cts [PL_BIN_NOEXPAND];
     pllab "M" "dN/dM" title
 
 let _ = 
   plparseopts Sys.argv [PL_PARSE_FULL];
-  plstar 4 5;
+  plstar 3 6;
   Array.iter 
     (fun (file, title) -> 
       plot_masses (read_ms file) title)
