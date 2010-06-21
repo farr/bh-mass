@@ -10,7 +10,7 @@ type dist =
 
 let mmin = ref 0.0
 let mmax = ref 40.0 
-let dm = ref 1.0
+let dm = ref 0.5
 let infile = ref ""
 let outfile = ref ""
 let dist = ref No_dist
