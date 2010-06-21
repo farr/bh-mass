@@ -1,4 +1,5 @@
 bounds.native
+dist.native
 evidence_plot.native
 exp_cutoff.native
 gaussian.native
@@ -7,6 +8,5 @@ histogram.native
 mass_hist.native
 masses.native
 nbin_counts.native
-plot_dist.native
 power_law.native
 two_gaussian.native
