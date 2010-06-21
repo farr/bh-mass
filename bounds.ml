@@ -71,11 +71,10 @@ let solve f x0 =
 let two_gaussian_bounds = function 
   | [|mu1; mu2; sigma1; sigma2; a|] -> 
     let f frac x = 
-      frac +. 
-        a*.(Gsl_sf.erf ((x -. mu1)/.(1.4142135623730950488*.sigma1))) +. 
-        (1.0 -. a)*.(Gsl_sf.erf ((x -. mu2) /. (1.4142135623730950488*.sigma2))) in 
-    let fmin x = f (49.0/.100.0) x and 
-        fmax x = f (-49.0/.100.0) x in 
+      0.5*.(1.0 +. a*.(Gsl_sf.erf (0.70710678118654752440 *. (x -. mu1) /. sigma1))
+            +. (1.0 -. a)*.(Gsl_sf.erf (0.70710678118654752440 *. (x -. mu2) /. sigma2))) -. frac in 
+    let fmin x = f 0.01 x and 
+        fmax x = f 0.99 x in 
       [| solve fmin 0.0; solve fmax 0.0|]
   | _ -> raise (Invalid_argument "two_gaussian_bounds: bad state")
 
