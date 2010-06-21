@@ -43,8 +43,8 @@ two-gaussian:
 .PHONY: post-exp-cutoff
 post-exp-cutoff:
 	_build/harmonic_evidence.native -i exp-cutoff.mcmc -o exp-cutoff.mcmc.ev
-	_build/dist.native -exp-cutoff exp-cutoff.mcmc -o exp-cutoff.mcmc.dist
-	_build/bounds.native -exp-cutoff exp-cutoff.mcmc -o exp-cutoff.mcmc.bds
+	_build/dist.native -exponential exp-cutoff.mcmc -o exp-cutoff.mcmc.dist
+	_build/bounds.native -exponential exp-cutoff.mcmc -o exp-cutoff.mcmc.bds
 
 .PHONY: post-gaussian
 post-gaussian:
