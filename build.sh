@@ -35,7 +35,7 @@ do_harm_ev () {
 }
 
 do_direct_ev () {
-    _build/direct_evidence.native -i $1 -o $1.ev.direct
+    _build/direct_evidence.native -i $1 -o $1.ev.direct -ngroup 256
 }
 
 do_mcmc () {
@@ -58,7 +58,9 @@ rule () {
                 do_bounds $file;
                 do_dist $file;
                 do_harm_ev $file;
-                do_direct_ev $file;
+                if [ "$file" != "histogram.mcmc" ]; then 
+                    do_direct_ev $file
+                fi;
             done;;
         plots)
             for file in _build/*plot.native; do
