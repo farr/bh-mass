@@ -29,6 +29,7 @@ plots: all
 	ps2pdf dist.ps
 	_build/bounds_plot.native -dev ps -o bounds.ps
 	ps2pdf bounds.ps
+	mv *.ps *.pdf ../Paper/plots/
 
 .PHONY: exp-cutoff
 exp-cutoff:
