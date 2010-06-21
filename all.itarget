@@ -1,5 +1,6 @@
 bounds.native
 dist.native
+dist_plot.native
 evidence_plot.native
 exp_cutoff.native
 gaussian.native
