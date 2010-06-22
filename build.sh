@@ -44,6 +44,15 @@ do_mcmc () {
     _build/$1.native
 }
 
+do_post_file () {
+    do_bounds $1;
+    do_dist $1;
+    do_harm_ev $1;
+    if [ "$1" != "histogram.mcmc" ]; then 
+        do_direct_ev $1
+    fi;
+}
+
 rule () {
     case $1 in 
         clean) ocamlbuild -clean;;
@@ -56,14 +65,12 @@ rule () {
                 _build/histogram.native -fixedbin -nbin $i -o histogram-${i}bin.mcmc
             done;;
         post)
-            for file in *.mcmc; do 
-                do_bounds $file;
-                do_dist $file;
-                do_harm_ev $file;
-                if [ "$file" != "histogram.mcmc" ]; then 
-                    do_direct_ev $file
-                fi;
+            for file in *.mcmc; do
+                do_post_file $file;
             done;;
+        post-file)
+            do_post_file $2;
+            shift;;
         plots)
             for file in _build/*plot.native; do
                 $file -dev ps -o `plot_name $file`
