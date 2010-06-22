@@ -14,8 +14,9 @@ let _ =
   let (bins, cts) = Mass_plot.bin_data data xmin xmax nbin in
     plparseopts Sys.argv [PL_PARSE_FULL];
     plinit ();
+    plfontld 1;
     plenv xmin xmax 0.0 (1.1*.(Array.fold_left max neg_infinity cts)) 0 0;
     plbin bins cts [PL_BIN_NOEXPAND];
-    pllab "alpha" "dN/d(alpha)" "";
+    pllab "#ga" "dN/d#ga" "";
     plend ()
     
