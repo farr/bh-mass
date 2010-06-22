@@ -14,4 +14,6 @@ mass_hist.native
 mass_plot.native
 nbin_counts.native
 power_law.native
+reversible_jump.native
+rj_plot.native
 two_gaussian.native

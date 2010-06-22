@@ -19,6 +19,7 @@ plot_name () {
         _build/dist*) echo "dist.ps";;
         _build/evidence*) echo "evidence.ps";;
         _build/mass*) echo "masses.ps";;
+        _build/rj*) echo "rj.ps";;
     esac
 }
 
