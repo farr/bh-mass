@@ -7,7 +7,7 @@ type state =
 
 let mmin = 0.0 
 let mmax = 40.0
-let alphamin = -8.0
+let alphamin = -20.0
 let alphamax = 8.0
 
 let nsamp = ref 1000000
