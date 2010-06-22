@@ -67,7 +67,8 @@ rule () {
         post)
             for file in *.mcmc; do
                 do_post_file $file;
-            done;;
+            done;
+            _build/reversible_jump.native > reversible-jump.dat;;
         post-file)
             do_post_file $2;
             shift;;
