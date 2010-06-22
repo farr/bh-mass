@@ -6,7 +6,7 @@ let nmsamp = ref 1000
 let outfile = ref "two-gaussian.mcmc"
 let overwrite = ref false
 let nbin = ref 10000
-let nmcmc = ref 10000
+let nmcmc = ref 30000
 let nskip = ref 100
 
 let options = 

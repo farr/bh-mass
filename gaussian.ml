@@ -4,7 +4,7 @@ open Stats
 let mmin = ref 0.0
 let mmax = ref 40.0
 let nmsamp = ref 1000
-let nmcmc = ref 10000
+let nmcmc = ref 30000
 let nskip = ref 100
 let nbin = ref 10000
 let outfile = ref "gaussian.mcmc"
