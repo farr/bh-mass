@@ -12,18 +12,6 @@ choose_mcmc_arg () {
     esac
 }
 
-plot_name () {
-    case $1 in 
-        _build/all_masses*) echo "all-masses.ps";;
-        _build/bounds_plot*) echo "bounds.ps";;
-        _build/dist*) echo "dist.ps";;
-        _build/evidence*) echo "evidence.ps";;
-        _build/mass*) echo "masses.ps";;
-        _build/rj*) echo "rj.ps";;
-        _build/alpha*) echo "alpha.ps";;
-    esac
-}
-
 do_bounds () {
     _build/bounds.native `choose_mcmc_arg $1` $1 -o $1.bds
 }
@@ -72,14 +60,6 @@ rule () {
         post-file)
             do_post_file $2;
             shift;;
-        plots)
-            for file in _build/*plot.native; do
-                $file -dev ps -o `plot_name $file`
-            done;
-            for file in *.ps; do
-                ps2pdf $file
-            done;
-            mv *.ps *.pdf ../Paper/plots/;;
         *) ocamlbuild $1;;
     esac
 }
