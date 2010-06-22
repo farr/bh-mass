@@ -1,4 +1,5 @@
 all_masses_plot.native
+alpha_plot.native
 bounds.native
 bounds_plot.native
 direct_evidence.native
