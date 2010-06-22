@@ -138,7 +138,7 @@ let nova_oph_77 =
   make_mass_generator
     (fun () -> draw_gaussian 4.86 0.13)
     (fun () -> draw_uniform 0.0 0.053)
-    (fun () -> draw_isotropic 60.0 80.0)
+    (fun () -> draw_isotropic (rad_of_deg 60.0) (rad_of_deg 80.0))
 
 (* Charles and Coe 2006 (book). *)
 let gs_2000 =
