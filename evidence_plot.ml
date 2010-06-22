@@ -40,7 +40,7 @@ let log10 x =
   (log x) /. (log 10.0)
 
 let plot_name index ymaxs name = 
-  plptex (float_of_int index) (log10 (1.1*.ymaxs.(index))) 0.0 1.0 0.0 name
+  plptex (float_of_int index) (log10 (1.3*.ymaxs.(index))) 0.0 1.0 0.0 name
 
 let plot_evidences xs ys ysdirect ymins ymaxs = 
   let xmin = (-1.0) and xmax = float_of_int ((Array.length xs)) and 
