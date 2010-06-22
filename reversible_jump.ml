@@ -317,17 +317,18 @@ let log_jump_prob _ = function
       log (Interp.jump_prob interp () state)
 
 let accumulate_into_counter counters = function 
-  | Histogram(bins) -> 
-    let n = Array.length bins - 2 in 
-      counters.(n) <- counters.(n) + 1
-  | Gaussian(_) -> 
-    counters.(5) <- counters.(5) + 1
   | Power_law(_) -> 
-    counters.(6) <- counters.(6) + 1
+    counters.(0) <- counters.(0) + 1
   | Exp_cutoff(_) -> 
-    counters.(7) <- counters.(7) + 1
+    counters.(1) <- counters.(1) + 1
+  | Gaussian(_) -> 
+    counters.(2) <- counters.(2) + 1
   | Two_gaussian(_) -> 
-    counters.(8) <- counters.(8) + 1
+    counters.(3) <- counters.(3) + 1
+  | Histogram(bins) -> 
+    let n = Array.length bins + 2 in 
+      counters.(n) <- counters.(n) + 1
+
 
 let _ = 
   Random.self_init ();
@@ -344,4 +345,6 @@ let _ =
       current := next !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
-    Array.iter (fun ct -> Printf.printf "%d\n" ct) counts
+    let out = open_out "reversible-jump.dat" in
+      Array.iter (fun ct -> Printf.fprintf out "%d\n" ct) counts;
+      close_out out

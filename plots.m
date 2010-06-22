@@ -1,0 +1,173 @@
+curFig=1;
+% Mass histogram.
+figure(curFig);
+colordef white;
+massData=importdata('masses.dat');
+[ns xs]=hist(massData, 1000);
+bar(xs, ns./sum(ns)*(1000/(max(massData)-min(massData))));
+h = findobj(gca,'Type','patch');
+set(h, {'FaceColor'}, {'black'}, {'EdgeColor'}, {'black'});
+axis([0 40 0 0.25])
+xlabel('M')
+ylabel('dN/dM')
+print -deps '../Paper/plots/masses.eps'
+
+% Harmonic and Direct Evidence.
+curFig=curFig+1;
+figure(curFig);
+colordef white;
+xs = 0:8;
+harmEvData=[importdata('power-law.mcmc.ev');
+            importdata('exp-cutoff.mcmc.ev');
+            importdata('gaussian.mcmc.ev');
+            importdata('two-gaussian.mcmc.ev');
+            importdata('histogram-1bin.mcmc.ev');
+            importdata('histogram-2bin.mcmc.ev');
+            importdata('histogram-3bin.mcmc.ev');
+            importdata('histogram-4bin.mcmc.ev');
+            importdata('histogram-5bin.mcmc.ev')];
+dirEvData=[importdata('power-law.mcmc.ev.direct');
+           importdata('exp-cutoff.mcmc.ev.direct');
+           importdata('gaussian.mcmc.ev.direct');
+           importdata('two-gaussian.mcmc.ev.direct');
+           importdata('histogram-1bin.mcmc.ev.direct');
+           importdata('histogram-2bin.mcmc.ev.direct');
+           importdata('histogram-3bin.mcmc.ev.direct');
+           importdata('histogram-4bin.mcmc.ev.direct');
+           importdata('histogram-5bin.mcmc.ev.direct')];
+semilogy(xs,dirEvData, 'xk');
+hold on;
+errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
+axis([-0.5 8.5 0 1.3e-20])
+ylabel('p(d)')
+legend('Direct Integration Evidence','Harmonic Mean Evidence')
+print -deps '../Paper/plots/evidence.eps'
+hold off
+
+% Reverse Jump Evidence
+curFig = curFig + 1;
+figure(curFig);
+colordef white;
+
+rjEvData=importdata('reversible-jump.dat');
+xs=0:(length(rjEvData)-1);
+semilogy(xs,rjEvData, 'xk');
+axis([-0.5 8.5 1e4 1e6]);
+ylabel('Counts');
+print -deps '../Paper/plots/rj.eps'
+
+% Parameteric Distributions
+curFig = curFig + 1;
+figure(curFig);
+nx=2;
+ny=2;
+mmin=2;
+mmax=15;
+ymin=0;
+ymax=0.6;
+subplot(nx,ny,1);
+data=importdata('power-law.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Power Law')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,2)
+data=importdata('exp-cutoff.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Exponential')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,3)
+data=importdata('gaussian.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Gaussian')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,4)
+data=importdata('two-gaussian.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Two Gaussians')
+xlabel('M')
+ylabel('dN/dM')
+print -deps '../Paper/plots/dist-parameteric.eps'
+
+% Non-Parameteric Distributions
+curFig = curFig + 1;
+figure(curFig);
+nx=2;
+ny=3;
+mmin=2;
+mmax=15;
+ymin=0;
+ymax=0.4;
+subplot(nx,ny,1);
+data=importdata('histogram-1bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (1 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,2);
+data=importdata('histogram-2bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (2 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,3);
+data=importdata('histogram-3bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (3 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,4);
+data=importdata('histogram-4bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (4 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,5);
+data=importdata('histogram-5bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (5 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+print -deps '../Paper/plots/dist-non-parameteric.eps'
+
+% Mass Plots
+curFig = curFig + 1;
+figure(curFig);
+nx=5;
+ny=4;
+filenames={'masses-a0620.dat'; 'masses-m33-x7.dat'; 'masses-cyg-x1.dat';
+           'masses-nova-mus-1991.dat'; 'masses-gro-j0422.dat';
+           'masses-nova-oph-77.dat'; 'masses-gro-j1655.dat';
+           'masses-u4-1543.dat'; 'masses-grs-1009.dat';
+           'masses-v4641-sgr.dat'; 'masses-grs-1915.dat';
+           'masses-xte-j1118.dat'; 'masses-gs-1354.dat';
+           'masses-xte-j1550.dat'; 'masses-gs-2000.dat';
+           'masses-xte-j1650.dat'; 'masses-gs-2023.dat'};
+names={'A0620'; 'M33 X7'; 'Cyg X1'; 'Nova Mus 1991';
+       'GRO J0422'; 'Nova Oph 77';
+       'GRO J1655'; 'U4 1543'; 'GRS 1009';
+       'V4641 Sgr'; 'GRS 1915'; 'XTE J1118'; 'GS 1354';
+       'XTE J1550'; 'GS 2000'; 'XTE J1650'; 'GS 2023'};
+for i = 1:length(filenames)
+    subplot(nx,ny,i);
+    data=importdata(filenames{i});
+    [ns xs]=hist(data, 100);
+    bar(xs,ns./(sum(ns))*100/(max(data)-min(data)));
+    h = findobj(gca,'Type','patch');
+    set(h, {'FaceColor'}, {'black'}, {'EdgeColor'}, {'black'});
+    xlabel('M')
+    ylabel('dN/dM')
+    title(names{i})
+end
+print -deps '../Paper/plots/all-masses.eps'
