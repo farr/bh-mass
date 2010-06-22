@@ -1,6 +1,6 @@
 open Plplot
 
-let xmin = -8.0
+let xmin = -12.0
 let xmax = 8.0
 let nbin = 100
 
