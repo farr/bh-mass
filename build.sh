@@ -70,7 +70,7 @@ rule () {
                 ps2pdf $file
             done;
             mv *.ps *.pdf ../Paper/plots/;;
-        *) echo "Unknown command: $1";;
+        *) ocamlbuild $1;;
     esac
 }
 
