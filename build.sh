@@ -2,6 +2,8 @@
 
 set -e
 
+prefix=.
+
 choose_mcmc_arg () {
     case $1 in 
         histogram*) echo "-histogram";;
@@ -13,23 +15,23 @@ choose_mcmc_arg () {
 }
 
 do_bounds () {
-    _build/bounds.native `choose_mcmc_arg $1` $1 -o $1.bds
+    ${prefix}/_build/bounds.native `choose_mcmc_arg $1` $1 -o $1.bds
 }
 
 do_dist () {
-    _build/dist.native `choose_mcmc_arg $1` $1 -o $1.dist
+    ${prefix}/_build/dist.native `choose_mcmc_arg $1` $1 -o $1.dist
 }
 
 do_harm_ev () {
-    _build/harmonic_evidence.native -i $1 -o $1.ev
+    ${prefix}/_build/harmonic_evidence.native -i $1 -o $1.ev
 }
 
 do_direct_ev () {
-    _build/direct_evidence.native -i $1 -o $1.ev.direct -ngroup 256
+    ${prefix}/_build/direct_evidence.native -i $1 -o $1.ev.direct -ngroup 256
 }
 
 do_mcmc () {
-    _build/$1.native
+    ${prefix}/_build/$1.native
 }
 
 do_post_file () {
@@ -50,13 +52,13 @@ rule () {
                 do_mcmc $mcmc
             done;
             for i in {1..5}; do 
-                _build/histogram.native -fixedbin -nbin $i -o histogram-${i}bin.mcmc
+                ${prefix}/_build/histogram.native -fixedbin -nbin $i -o histogram-${i}bin.mcmc
             done;;
         post)
             for file in *.mcmc; do
                 do_post_file $file;
             done;
-            _build/reversible_jump.native > reversible-jump.dat;;
+            ${prefix}/_build/reversible_jump.native > reversible-jump.dat;;
         post-file)
             do_post_file $2;
             shift;;
