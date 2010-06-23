@@ -349,5 +349,5 @@ let _ =
       accumulate_into_counter counts (!current).Mcmc.value
     done;
     let out = open_out "reversible-jump.dat" in
-      Array.iteri (fun i ct -> Printf.fprintf out "%d # %s\n" ct names.(i)) counts;
+      Array.iteri (fun i ct -> Printf.fprintf out "%d % %s\n" ct names.(i)) counts;
       close_out out
