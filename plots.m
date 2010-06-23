@@ -3,10 +3,8 @@ curFig=1;
 figure(curFig);
 colordef white;
 massData=importdata('masses.dat');
-[ns xs]=hist(massData, 1000);
-bar(xs, ns./sum(ns)*(1000/(max(massData)-min(massData))));
-h = findobj(gca,'Type','patch');
-set(h, {'FaceColor'}, {'black'}, {'EdgeColor'}, {'black'});
+normalizedHist(massData, 1000);
+blackHistogram();
 axis([0 40 0 0.25])
 xlabel('M')
 ylabel('dN/dM')
@@ -38,7 +36,7 @@ dirEvData=[importdata('power-law.mcmc.ev.direct');
 semilogy(xs,dirEvData, 'xk');
 hold on;
 errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
-axis([-0.5 8.5 0 1.3e-20])
+axis([-0.5 8.5 1e-22 5e-20])
 ylabel('p(d)')
 legend('Direct Integration Evidence','Harmonic Mean Evidence')
 print -deps '../Paper/plots/evidence.eps'
@@ -64,7 +62,7 @@ ny=2;
 mmin=2;
 mmax=15;
 ymin=0;
-ymax=0.6;
+ymax=0.7;
 subplot(nx,ny,1);
 data=importdata('power-law.mcmc.dist');
 errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
@@ -162,12 +160,62 @@ names={'A0620'; 'M33 X7'; 'Cyg X1'; 'Nova Mus 1991';
 for i = 1:length(filenames)
     subplot(nx,ny,i);
     data=importdata(filenames{i});
-    [ns xs]=hist(data, 100);
-    bar(xs,ns./(sum(ns))*100/(max(data)-min(data)));
-    h = findobj(gca,'Type','patch');
-    set(h, {'FaceColor'}, {'black'}, {'EdgeColor'}, {'black'});
+    normalizedHist(data, 100);
+    blackHistogram();   
     xlabel('M')
     ylabel('dN/dM')
     title(names{i})
 end
 print -deps '../Paper/plots/all-masses.eps'
+
+% Power-law Plots
+curFig = curFig + 1;
+figure(curFig);
+data=importdata('power-law.mcmc');
+normalizedHist(data(:,3),200);
+blackHistogram();
+xlabel('\alpha');
+ylabel('dN/d\alpha');
+print -deps '../Paper/plots/alpha.eps'
+
+% Parameteric Mmin plots
+curFig = curFig + 1;
+figure(curFig);
+files={'power-law.mcmc.bds'; 'exp-cutoff.mcmc.bds'; 
+       'gaussian.mcmc.bds'; 'two-gaussian.mcmc.bds'};
+names={'Power Law'; 'Exponential'; 'Gaussian'; 'Two Gaussians'};
+nx=2;
+ny=2;
+for i = 1:length(files)
+    subplot(nx,ny,i);
+    data=importdata(files{i});
+    normalizedHist(data(:,1),1000);
+    axis([max(0,min(data(:,1))) inf -inf inf]);
+    blackHistogram();
+    title(names{i});
+    xlabel('M_{min}');
+    ylabel('dN/dM_{min}');
+end
+print -deps '../Paper/plots/mmin-parameteric.eps'
+
+% Nonparameteric Mmin plots
+curFig = curFig + 1;
+nx = 2;
+ny = 3;
+figure(curFig);
+files={'histogram-1bin.mcmc.bds'; 'histogram-2bin.mcmc.bds';
+       'histogram-3bin.mcmc.bds'; 'histogram-4bin.mcmc.bds';
+       'histogram-5bin.mcmc.bds'};
+titles={'Histogram (1 Bin)'; 'Histogram (2 Bin)';
+        'Histogram (3 Bin)'; 'Histogram (4 Bin)';
+        'Histogram (5 Bin)'};
+for i = 1:length(files)
+    subplot(nx,ny,i);
+    data=importdata(files{i});
+    normalizedHist(data(:,1),1000);
+    blackHistogram();
+    title(titles{i});
+    xlabel('M_{min}');
+    ylabel('dN/dM_{min}');
+end
+print -deps '../Paper/plots/mmin-non-parameteric.eps'
