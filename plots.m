@@ -160,7 +160,7 @@ names={'A0620'; 'M33 X7'; 'Cyg X1'; 'Nova Mus 1991';
 for i = 1:length(filenames)
     subplot(nx,ny,i);
     data=importdata(filenames{i});
-    normalizedHist(data, 100);
+    normalizedHist(data);
     blackHistogram();   
     xlabel('M')
     ylabel('dN/dM')
