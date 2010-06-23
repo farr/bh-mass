@@ -329,6 +329,9 @@ let accumulate_into_counter counters = function
     let n = Array.length bins + 2 in 
       counters.(n) <- counters.(n) + 1
 
+let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; 
+              "Histogram 1"; "Histogram 2"; "Histogram 3"; "Histogram 4"; 
+              "Histogram 5"|]
 
 let _ = 
   Random.self_init ();
@@ -346,5 +349,5 @@ let _ =
       accumulate_into_counter counts (!current).Mcmc.value
     done;
     let out = open_out "reversible-jump.dat" in
-      Array.iter (fun ct -> Printf.fprintf out "%d\n" ct) counts;
+      Array.iteri (fun i ct -> Printf.fprintf out "%d # %s\n" ct names.(i)) counts;
       close_out out
