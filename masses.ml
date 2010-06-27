@@ -48,7 +48,7 @@ let xte_j1650 =
     (fun () -> draw_uniform 0.0 0.5) (* No constraints on mass ratio; use uniform for broad. *)
     (fun () -> draw_isotropic (rad_of_deg 50.0) (rad_of_deg 80.0)) (* If no disk light, 50 +/- 3 *)
 
-(* Filippenko, et al., 1999. Also Shahbaz et. al. 1996 (for i). *)
+(* Filippenko, et al., 1999. *)
 let grs_1009 = 
   make_mass_generator
     (fun () -> draw_gaussian 3.17 0.12)
@@ -66,7 +66,7 @@ let m33_x7 =
    vol. 384, pp. 849--862, 2008. *)
 let a0620 = 
   make_mass_generator
-    (fun () -> draw_gaussian 3.10 0.04)
+    (fun () -> draw_gaussian 2.76 0.036)
     (fun () -> draw_gaussian 0.06 0.004)
     (fun () -> draw_gaussian (rad_of_deg 50.98) (rad_of_deg 0.87))
 
