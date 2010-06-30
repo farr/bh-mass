@@ -5,12 +5,32 @@ type state =
   | Two_gaussian of float array
   | Exp_cutoff of float array
 
+let state_to_array = function 
+  | Histogram(x) -> Array.append [|0.0|] x
+  | Gaussian(x) -> Array.append [|1.0|] x
+  | Power_law(x) -> Array.append [|2.0|] x
+  | Two_gaussian(x) -> Array.append [|3.0|] x
+  | Exp_cutoff(x) -> Array.append [|4.0|] x
+
+let array_to_state x = 
+  let n = Array.length x in
+  let pt = Array.sub x 1 (n-1) in
+  match x.(0) with 
+    | 0.0 -> Histogram pt
+    | 1.0 -> Gaussian pt
+    | 2.0 -> Power_law pt
+    | 3.0 -> Two_gaussian pt
+    | 4.0 -> Exp_cutoff pt
+    | _ -> raise (Failure "array_to_state: bad first 'coordinate'")
+
 let mmin = 0.0 
 let mmax = 40.0
 let alphamin = -12.0
 let alphamax = 8.0
 
 let nsamp = ref 1000000
+
+let out = ref "reversible-jump.mcmc"
 
 let options = 
   [("-n", Arg.Set_int nsamp,
@@ -367,11 +387,14 @@ let _ =
                      like_prior = {Mcmc.log_prior = log_prior s0;
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
+  let out = open_out !out in
   let counts = Array.make 9 0 in 
     for i = 1 to !nsamp do
       current := next !current;
+      Read_write.write_sample state_to_array out !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
+    close_out out;
     let out = open_out "reversible-jump.dat" in
       Array.iteri (fun i ct -> Printf.fprintf out "%d %% %s\n" ct names.(i)) counts;
       close_out out
