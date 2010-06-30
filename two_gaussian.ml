@@ -60,7 +60,7 @@ let log_prior = function
       neg_infinity
     else
       let lp1 = log_prior1 mu1 sigma1 and 
-          lp2 = log_prior2 mu2 sigma2 in 
+          lp2 = log_prior1 mu2 sigma2 in 
         0.69314718055994530942 +. lp1 +. lp2 (* Account for factor of two with first number. *)
   | _ -> raise (Invalid_argument "log_prior: bad state")
 

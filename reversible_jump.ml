@@ -95,9 +95,9 @@ module G = struct
 
   let log_prior = function 
     | [|mu; sigma|] -> 
-      if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
-        mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin then 
-        2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
+      if mu >= mmin && mu <= mmax && sigma >= 0.0 && 
+        mu +. 2.0*.sigma <= mmax && mu -. 2.0*.sigma >= mmin then 
+        2.0794415416798359283 -. 2.0*.(log (mmax -. mmin))
       else
         neg_infinity
     | _ -> raise (Failure "log_prior: bad state")
@@ -148,8 +148,8 @@ module Ec = struct
 
   let log_prior = function 
     | [|mc; m0|] -> 
-      if mc >= !mmin && mc <= !mmax && m0 >= 0.0 && mc +. 2.0*.m0 <= !mmax then 
-        1.3862943611198906188 -. 2.0*.(log (!mmax -. !mmin)) (* Log(4) is first constant. *)
+      if mc >= mmin && mc <= mmax && m0 >= 0.0 && mc +. 2.0*.m0 <= mmax then 
+        1.3862943611198906188 -. 2.0*.(log (mmax -. mmin)) (* Log(4) is first constant. *)
       else
         neg_infinity
     | _ -> raise (Failure "log_prior: bad state")
@@ -177,9 +177,9 @@ module Tg = struct
     | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
   let log_prior1 mu sigma = 
-    if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
-      mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin then 
-      2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
+    if mu >= mmin && mu <= mmax && sigma >= 0.0 && 
+      mu +. 2.0*.sigma <= mmax && mu -. 2.0*.sigma >= mmin then 
+      2.0794415416798359283 -. 2.0*.(log (mmax -. mmin))
     else
       neg_infinity
 
@@ -189,7 +189,7 @@ module Tg = struct
         neg_infinity
       else
         let lp1 = log_prior1 mu1 sigma1 and 
-            lp2 = log_prior2 mu2 sigma2 in 
+            lp2 = log_prior1 mu2 sigma2 in 
           0.69314718055994530942 +. lp1 +. lp2 (* Account for factor of two with first number. *)
     | _ -> raise (Invalid_argument "log_prior: bad state")
 end
