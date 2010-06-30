@@ -46,7 +46,13 @@ let log_likelihood msamples = function
         msamples
   | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
-let log_prior _ = (-2.0)*.(log (!mmax -. !mmin))
+let log_prior = function 
+  | [|mc; m0|] -> 
+    if mc >= !mmin && mc <= !mmax && m0 >= 0.0 && mc +. 2.0*.m0 <= !mmax then 
+      1.3862943611198906188 -. 2.0*.(log (!mmax -. !mmin)) (* Log(4) is first constant. *)
+    else
+      neg_infinity
+  | _ -> raise (Failure "log_prior: bad state")
 
 let jump_proposal = function 
   | [|mc; m0|] -> 

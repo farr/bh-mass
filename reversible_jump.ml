@@ -93,8 +93,14 @@ module G = struct
         msamples
     | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
-  let log_prior _ = 
-    (-2.0)*.(log (mmax -. mmin))
+  let log_prior = function 
+    | [|mu; sigma|] -> 
+      if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
+        mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin then 
+        2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
+      else
+        neg_infinity
+    | _ -> raise (Failure "log_prior: bad state")
 end
 
 module Pl = struct 
@@ -140,7 +146,13 @@ module Ec = struct
           msamples
     | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
-  let log_prior _ = (-2.0)*.(log (mmax -. mmin))
+  let log_prior = function 
+    | [|mc; m0|] -> 
+      if mc >= !mmin && mc <= !mmax && m0 >= 0.0 && mc +. 2.0*.m0 <= !mmax then 
+        1.3862943611198906188 -. 2.0*.(log (!mmax -. !mmin)) (* Log(4) is first constant. *)
+      else
+        neg_infinity
+    | _ -> raise (Failure "log_prior: bad state")
 end 
 
 module Tg = struct 
@@ -164,12 +176,21 @@ module Tg = struct
         msamples
     | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
+  let log_prior1 mu sigma = 
+    if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
+      mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin then 
+      2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
+    else
+      neg_infinity
+
   let log_prior = function 
     | [|mu1; mu2; sigma1; sigma2; a|] -> 
       if mu1 > mu2 then 
         neg_infinity
       else
-        0.69314718055994530942 -. 4.0*.(log (mmax -. mmin)) (* First factor is log(2). *)
+        let lp1 = log_prior1 mu1 sigma1 and 
+            lp2 = log_prior2 mu2 sigma2 in 
+          0.69314718055994530942 +. lp1 +. lp2 (* Account for factor of two with first number. *)
     | _ -> raise (Invalid_argument "log_prior: bad state")
 end
 
@@ -225,13 +246,16 @@ let hinterps =
         interp_from_file file (Array.make (i+2) mmin) (Array.make (i+2) mmax))
       files
 
-let ginterp = interp_from_file "gaussian.mcmc" (Array.make 2 mmin) (Array.make 2 mmax)
+let ginterp = interp_from_file "gaussian.mcmc" [|mmin; 0.0|] [|mmax; 0.25*.(mmax-.mmin)|]
 
 let pinterp = interp_from_file "power-law.mcmc" [|mmin; mmin; alphamin|] [|mmax; mmax; alphamax|]
 
-let einterp = interp_from_file "exp-cutoff.mcmc" (Array.make 2 mmin) (Array.make 2 mmax)
+let einterp = interp_from_file "exp-cutoff.mcmc" [|mmin; 0.0|] [|mmax; 0.5*.(mmin-.mmax)|]
 
-let tginterp = interp_from_file "two-gaussian.mcmc" [|mmin; mmin; mmin; mmin; 0.0|] [|mmax; mmax; mmax; mmax; 1.0|]
+let tginterp = 
+  interp_from_file "two-gaussian.mcmc" 
+    [|mmin; mmin; 0.0; 0.0; 0.0|] 
+    [|mmax; mmax; 0.25*.(mmax -. mmin); 0.25*.(mmax-.mmin); 1.0|]
 
 let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp|]
 
