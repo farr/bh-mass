@@ -1,5 +1,7 @@
 open Printf
 
+module R = Rj_base
+
 type dist = 
   | None
   | Histogram
@@ -7,6 +9,7 @@ type dist =
   | Power_law
   | Exponential
   | Two_gaussian
+  | Rj
 
 let which_dist = ref None
 let filename = ref ""
@@ -23,6 +26,8 @@ let options =
     "use an exponential mcmc output in the given file");
    ("-two-gaussian", Arg.String (fun s -> which_dist := Two_gaussian; filename := s),
     "use the two-gaussian mcmc output in the given file");
+   ("-rj", Arg.String (fun s -> which_dist := Rj; filename := s),
+    "use the reversible-jump mcmc output in the given file");
    ("-o", Arg.Set_string outfile, "output filename")]
 
 let hist_bounds (bins : float array) = 
@@ -78,6 +83,14 @@ let two_gaussian_bounds = function
       [| solve fmin 0.0; solve fmax 0.0|]
   | _ -> raise (Invalid_argument "two_gaussian_bounds: bad state")
 
+let rj_bounds x = 
+  match R.array_to_state x with 
+    | R.Histogram(x) -> hist_bounds x
+    | R.Gaussian(x) -> gaussian_bounds x
+    | R.Power_law(x) -> power_law_bounds x
+    | R.Two_gaussian(x) -> two_gaussian_bounds x
+    | R.Exp_cutoff(x) -> exponential_bounds x
+
 let _ = 
   Arg.parse options (fun _ -> ()) "bounds.{byte,native} OPTIONS ...";
   let get_bounds = 
@@ -87,6 +100,7 @@ let _ =
       | Power_law -> power_law_bounds
       | Histogram -> hist_bounds
       | Two_gaussian -> two_gaussian_bounds
+      | Rj -> rj_bounds
       | _ -> raise (Failure "You must specify a distribution to read from.") in 
   let inp = open_in !filename in 
   let samples = Read_write.read (fun x -> x) inp in 
