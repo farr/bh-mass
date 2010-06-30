@@ -36,8 +36,9 @@ dirEvData=[importdata('power-law.mcmc.ev.direct');
 semilogy(xs,dirEvData, 'xk');
 hold on;
 errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
-axis([-0.5 8.5 1e-22 5e-20])
-ylabel('p(d)')
+axis([-0.5 8.5 -inf inf])
+set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'H1', 'H2', 'H3', 'H4', 'H5'});
+ylabel('p(d|M_i)')
 legend('Direct Integration Evidence','Harmonic Mean Evidence')
 print -deps '../Paper/plots/evidence.eps'
 hold off
@@ -50,7 +51,8 @@ colordef white;
 rjEvData=importdata('reversible-jump.dat');
 xs=0:(length(rjEvData)-1);
 semilogy(xs,rjEvData, 'xk');
-axis([-0.5 8.5 1e4 1e6]);
+axis([-0.5 8.5 0.5*min(rjEvData) 1.5*max(rjEvData)]);
+set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'H1', 'H2', 'H3', 'H4', 'H5'});
 ylabel('Counts');
 print -deps '../Paper/plots/rj.eps'
 
@@ -219,3 +221,30 @@ for i = 1:length(files)
     ylabel('dN/dM_{min}');
 end
 print -deps '../Paper/plots/mmin-non-parameteric.eps'
+
+% Exponential M_0 plots
+curFig=curFig+1;
+figure(curFig);
+data=importdata('exp-cutoff.mcmc');
+normalizedHist(data(:,2),100);
+blackHistogram();
+xlabel('M_0');
+ylabel('dN/dM_0');
+print -deps '../Paper/plots/exp-m0.eps'
+
+% Gaussian Mean, Sigma Plots.
+curFig=curFig+1;
+figure(curFig);
+data=importdata('gaussian.mcmc');
+nx=1; ny = 2;
+subplot(nx,ny,1);
+normalizedHist(data(:,1));
+blackHistogram();
+xlabel('\mu');
+ylabel('dN/d\mu');
+subplot(nx,ny,2);
+normalizedHist(data(:,2));
+blackHistogram();
+xlabel('\sigma');
+ylabel('dN/d\sigma');
+print -deps '../Paper/plots/gaussian.eps'
