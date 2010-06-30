@@ -70,7 +70,7 @@ if [ $# -eq 0 ]; then
     rule all
 else
     while [ $# -gt 0 ]; do
-        rule $1;
+        rule "$@";
         shift
     done
 fi
