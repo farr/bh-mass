@@ -37,8 +37,8 @@ do_mcmc () {
 
 do_post_file () {
     do_bounds $1;
+    do_dist $1;
     if [ "$1" != "reversible-jump.mcmc" ]; then 
-        do_dist $1;
         do_harm_ev $1;
         if [ "$1" != "histogram.mcmc" ]; then 
             do_direct_ev $1

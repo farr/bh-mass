@@ -1,5 +1,7 @@
 open Printf
 
+module R = Rj_base
+
 type dist = 
   | No_dist
   | Gaussian
@@ -7,6 +9,7 @@ type dist =
   | Exponential
   | Power_law
   | Two_gaussian
+  | Rj
 
 let mmin = ref 0.0
 let mmax = ref 40.0 
@@ -26,6 +29,8 @@ let options =
     "use power-law MCMC output in given file");
    ("-two-gaussian", Arg.String (fun s -> dist := Two_gaussian; infile := s),
     "use two-gaussian MCMC output in given file");
+   ("-rj", Arg.String (fun s -> dist := Rj; infile := s),
+    "use reversible-jump mcmc output in given file");
    ("-o", Arg.Set_string outfile, "output to given file");
    ("-mmin", Arg.Set_float mmin, 
     sprintf "minimum mass to plot (default %g)" !mmin);
@@ -90,6 +95,14 @@ let eval_two_gaussian params x =
       a*.(eval_gaussian [|mu1; sigma1|] x) +. (1.0-.a)*.(eval_gaussian [|mu2; sigma2|] x)
     | _ -> raise (Invalid_argument "eval_two_gaussian: bad state")
 
+let eval_rj params x = 
+  match R.array_to_state params with 
+    | R.Histogram (p) -> eval_histogram p x
+    | R.Gaussian(p) -> eval_gaussian p x
+    | R.Power_law(p) -> eval_power_law p x
+    | R.Two_gaussian(p) -> eval_two_gaussian p x
+    | R.Exp_cutoff(p) -> eval_exponential p x
+
 let _ = 
   Arg.parse options (fun _ -> ()) "plot_dist.{byte,native} OPTIONS ...";
   let nb = int_of_float ((!mmax -. !mmin) /. !dm +. 0.5) in 
@@ -102,6 +115,7 @@ let _ =
     | Exponential -> eval_exponential
     | Power_law -> eval_power_law
     | Two_gaussian -> eval_two_gaussian 
+    | Rj -> eval_rj
     | _ -> raise (Failure "un-recognized distribution") in
   let pts = 
     Array.map 
