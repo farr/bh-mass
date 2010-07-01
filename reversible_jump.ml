@@ -368,7 +368,8 @@ let _ =
   let counts = Array.make 9 0 in 
     for i = 1 to !nsamp do
       current := next !current;
-      Read_write.write_sample state_to_array out !current;
+      if i mod 20 = 0 then (* Chosen to get ~1000 samples in hist5. *)
+        Read_write.write_sample state_to_array out !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
     close_out out;
