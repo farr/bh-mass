@@ -209,22 +209,25 @@ let log_likelihood samples =
       glog = G.log_likelihood samples and 
       plog = Pl.log_likelihood samples and 
       elog = Ec.log_likelihood samples and 
-      tglog = Tg.log_likelihood samples in 
+      tglog = Tg.log_likelihood samples and 
+      lnlog x = Logn_base.log_likelihood samples x in
     function 
       | Histogram(bins) -> hlog bins
       | Gaussian(params) -> glog params
       | Power_law(params) -> plog params
       | Exp_cutoff(params) -> elog params
       | Two_gaussian(params) -> tglog params
+      | Log_normal(params) -> lnlog params
 
 let log_prior =
-  let offset = -2.1972245773362193828 in (* offset = log(1/9) because 9 models, each equally likely. *)
+  let offset = -2.3025850929940456840 in (* offset = log(1/10) because 10 models, each equally likely. *)
     function 
       | Histogram(params) -> H.log_prior params +. offset
       | Gaussian(params) -> G.log_prior params +. offset
       | Power_law(params) -> Pl.log_prior params +. offset
       | Exp_cutoff(params) -> Ec.log_prior params +. offset
       | Two_gaussian(params) -> Tg.log_prior params +. offset
+      | Log_normal(params) -> Logn_base.log_prior params +. offset
 
 let interp_from_file file low high = 
   let inp = open_in file in 
@@ -252,7 +255,12 @@ let tginterp =
     [|mmin; mmin; 0.0; 0.0; 0.0|] 
     [|mmax; mmax; 0.25*.(mmax -. mmin); 0.25*.(mmax-.mmin); 1.0|]
 
-let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp|]
+let lninterp = 
+  interp_from_file "log-normal.mcmc"
+    (Logn_base.low_bounds ())
+    (Logn_base.high_bounds ())
+
+let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp; lninterp|]
 
 let _ = Printf.eprintf "Done with interpolations.\n%!"
 
@@ -262,7 +270,8 @@ let constr =
     [|(fun x -> Gaussian x);
       (fun x -> Power_law x);
       (fun x -> Exp_cutoff x);
-      (fun x -> Two_gaussian x)|]
+      (fun x -> Two_gaussian x);
+      (fun x -> Log_normal x)|]
 
 let compare_float (x : float) y = Pervasives.compare x y
 
@@ -334,6 +343,9 @@ let log_jump_prob _ = function
   | Two_gaussian(state) -> 
     let interp = interps.(8) in 
       log (Interp.jump_prob interp () state)
+  | Log_normal(state) -> 
+    let interp = interps.(9) in 
+      log (Interp.jump_prob interp () state)
 
 let accumulate_into_counter counters = function 
   | Power_law(_) -> 
@@ -344,11 +356,13 @@ let accumulate_into_counter counters = function
     counters.(2) <- counters.(2) + 1
   | Two_gaussian(_) -> 
     counters.(3) <- counters.(3) + 1
+  | Log_normal(_) -> 
+    counters.(4) <- counters.(4) + 1
   | Histogram(bins) -> 
-    let n = Array.length bins + 2 in 
+    let n = Array.length bins + 3 in 
       counters.(n) <- counters.(n) + 1
 
-let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; 
+let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log Normal";
               "Histogram 1"; "Histogram 2"; "Histogram 3"; "Histogram 4"; 
               "Histogram 5"|]
 
