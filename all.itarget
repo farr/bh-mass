@@ -5,6 +5,7 @@ exp_cutoff.native
 gaussian.native
 harmonic_evidence.native
 histogram.native
+log_normal.native
 masses.native
 mass_hist.native
 nbin_counts.native
