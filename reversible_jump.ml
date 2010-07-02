@@ -7,8 +7,6 @@ let alphamax = 8.0
 
 let nsamp = ref 1000000
 
-let out = ref "reversible-jump.mcmc"
-
 let options = 
   [("-n", Arg.Set_int nsamp,
     Printf.sprintf "number of samples to take (default %d)" !nsamp)]
@@ -364,15 +362,11 @@ let _ =
                      like_prior = {Mcmc.log_prior = log_prior s0;
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
-  let out = open_out !out in
   let counts = Array.make 9 0 in 
     for i = 1 to !nsamp do
       current := next !current;
-      if i mod 20 = 0 then (* Chosen to get ~1000 samples in hist5. *)
-        Read_write.write_sample state_to_array out !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
-    close_out out;
     let out = open_out "reversible-jump.dat" in
       Array.iteri (fun i ct -> Printf.fprintf out "%d %% %s\n" ct names.(i)) counts;
       close_out out

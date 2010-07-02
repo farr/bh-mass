@@ -11,6 +11,7 @@ choose_mcmc_arg () {
         power-law*) echo "-power-law";;
         two-gaussian*) echo "-two-gaussian";;
         exp*) echo "-exponential";;
+        log-normal*) echo "-log-normal";;
         reversible*) echo "-rj";;
     esac
 }
