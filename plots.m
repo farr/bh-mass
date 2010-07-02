@@ -103,7 +103,7 @@ ny=3;
 mmin=2;
 mmax=15;
 ymin=0;
-ymax=0.4;
+ymax=0.6;
 subplot(nx,ny,1);
 data=importdata('histogram-1bin.mcmc.dist');
 errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');

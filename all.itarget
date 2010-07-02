@@ -9,5 +9,6 @@ masses.native
 mass_hist.native
 nbin_counts.native
 power_law.native
+random_histogram.native
 reversible_jump.native
 two_gaussian.native
