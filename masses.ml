@@ -34,12 +34,12 @@ let xte_j1118 =
     (fun () -> draw_gaussian 0.0264 0.0040)
     (fun () -> draw_gaussian (rad_of_deg 68.0) (rad_of_deg 2.0))
 
-(* Gies, et al. 2003. *)
-let cyg_x1 = 
-  make_mass_generator
-    (fun () -> draw_gaussian 0.251 0.007)
-    (fun () -> draw_gaussian 2.778 0.386)
-    (fun () -> draw_isotropic (rad_of_deg 23.0) (rad_of_deg 38.0))
+(* (\* Gies, et al. 2003. *\) *)
+(* let cyg_x1 =  *)
+(*   make_mass_generator *)
+(*     (fun () -> draw_gaussian 0.251 0.007) *)
+(*     (fun () -> draw_gaussian 2.778 0.386) *)
+(*     (fun () -> draw_isotropic (rad_of_deg 23.0) (rad_of_deg 38.0)) *)
 
 (* Orosz, McClintock, Remillard, Corbel, 2004. *)
 let xte_j1650 = 
@@ -55,12 +55,12 @@ let grs_1009 =
     (fun () -> draw_gaussian 0.137 0.015)
     (fun () -> draw_isotropic (rad_of_deg 37.0) (rad_of_deg 80.0))
 
-(* Orosz Nature paper. *)
-let m33_x7 = 
-  make_mass_generator
-    (fun () -> draw_gaussian 0.46 0.08)
-    (fun () -> draw_gaussian 4.47 0.61)
-    (fun () -> draw_gaussian (rad_of_deg 74.6) (rad_of_deg 1.0))
+(* (\* Orosz Nature paper. *\) *)
+(* let m33_x7 =  *)
+(*   make_mass_generator *)
+(*     (fun () -> draw_gaussian 0.46 0.08) *)
+(*     (fun () -> draw_gaussian 4.47 0.61) *)
+(*     (fun () -> draw_gaussian (rad_of_deg 74.6) (rad_of_deg 1.0)) *)
 
 (* Andy's A0620 paper; also Neilsen, Steeghs and Vrtilek, MNRAS,
    vol. 384, pp. 849--862, 2008. *)
@@ -148,13 +148,13 @@ let gs_2000 =
     (fun () -> draw_isotropic (rad_of_deg 43.0) (rad_of_deg 74.0))
 
 let generators = 
-  [grs_1915; xte_j1118; cyg_x1; xte_j1650; grs_1009; 
-   m33_x7; a0620; gro_j0422; nova_mus_1991; gro_j1655; v4641_sgr;
+  [grs_1915; xte_j1118; (* cyg_x1; *) xte_j1650; grs_1009; 
+   (* m33_x7; *) a0620; gro_j0422; nova_mus_1991; gro_j1655; v4641_sgr;
    u4_1543; xte_j1550; gs_2023; gs_1354; nova_oph_77; gs_2000]
 
 let names = 
-  ["grs-1915"; "xte-j1118"; "cyg-x1"; "xte-j1650";
-   "grs-1009"; "m33-x7"; "a0620"; "gro-j0422"; "nova-mus-1991";
+  ["grs-1915"; "xte-j1118"; (* "cyg-x1"; *) "xte-j1650";
+   "grs-1009"; (* "m33-x7"; *) "a0620"; "gro-j0422"; "nova-mus-1991";
    "gro-j1655"; "v4641-sgr"; "u4-1543"; "xte-j1550"; "gs-2023"; "gs-1354";
    "nova-oph-77"; "gs-2000"]
 
