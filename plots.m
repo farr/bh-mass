@@ -5,7 +5,7 @@ colordef white;
 massData=importdata('masses.dat');
 normalizedHist(massData, 1000);
 blackHistogram();
-axis([0 40 0 0.25])
+axis([0 30 0 inf])
 xlabel('M')
 ylabel('dN/dM')
 print -deps '../Paper/plots/masses.eps'
@@ -173,6 +173,7 @@ for i = 1:length(filenames)
     data=importdata(filenames{i});
     normalizedHist(data);
     blackHistogram();   
+    axis([0 30 -inf inf]);
     xlabel('M')
     ylabel('dN/dM')
     title(names{i})
