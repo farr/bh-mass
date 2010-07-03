@@ -1,6 +1,22 @@
 let mmin = ref 0.01
 let mmax = ref 40.0
 
+let msigma_to_musigma = function 
+  | [|m; sigmam|] -> 
+    let som = sigmam/.m in
+    let sigma2 = log (1.0 +. som*.som) in 
+    let mu = (log m) -. 0.5*.sigma2 and 
+        sigma = sqrt sigma2 in 
+      [|mu; sigma|]
+  | _ -> raise (Invalid_argument "msigma_to_musigma")
+
+let musigma_to_msigma = function 
+  | [|mu; sigma|] -> 
+    let m = exp (mu +. 0.5*.sigma*.sigma) in
+    let s = m *. (sqrt (exp (sigma*.sigma) -. 1.0)) in 
+      [|m; s|]
+  | _ -> raise (Invalid_argument "musigma_to_msigma")
+
 let log_prior = function 
   | [|mu; sigma|] -> 
     let lmmax = log !mmax and 
