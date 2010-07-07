@@ -81,13 +81,14 @@ let two_gaussian_bounds = function
       [| solve fmin 0.0; solve fmax 0.0|]
   | _ -> raise (Invalid_argument "two_gaussian_bounds: bad state")
 
-let log_normal_bounds = function 
-  | [|mu; sigma|] -> 
-    let logxmin = mu -. 2.3263478740408411009*.sigma and 
-        logxmax = mu +. 2.3263478740408411009*.sigma in 
-      [|exp logxmin; exp logxmax|]
-  | _ -> raise (Invalid_argument "log_normal_bounds: bad state")
-      
+let log_normal_bounds state = 
+  match Logn_base.msigma_to_musigma state with 
+    | [|mu; sigma|] -> 
+      let logxmin = mu -. 2.3263478740408411009*.sigma and 
+          logxmax = mu +. 2.3263478740408411009*.sigma in 
+        [|exp logxmin; exp logxmax|]
+    | _ -> raise (Invalid_argument "log_normal_bounds: bad state")
+
 let _ = 
   Arg.parse options (fun _ -> ()) "bounds.{byte,native} OPTIONS ...";
   let get_bounds = 

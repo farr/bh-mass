@@ -94,7 +94,7 @@ let eval_two_gaussian params x =
     | _ -> raise (Invalid_argument "eval_two_gaussian: bad state")
 
 let eval_log_normal params x = 
-  match params with 
+  match Logn_base.msigma_to_musigma params with 
     | [|mu; sigma|] -> 
       exp (Stats.log_lognormal mu sigma x)
     | _ -> raise (Invalid_argument "eval_log_normal: bad state")
