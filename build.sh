@@ -52,7 +52,7 @@ rule () {
         clean) ocamlbuild -clean;;
         all) ocamlbuild all.otarget;;
         mcmc) 
-            for mcmc in gaussian two_gaussian histogram exp_cutoff power_law; do 
+            for mcmc in gaussian two_gaussian histogram exp_cutoff power_law log_normal; do 
                 do_mcmc $mcmc
             done;
             for i in {1..5}; do 
