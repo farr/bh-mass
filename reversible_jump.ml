@@ -4,12 +4,16 @@ let mmin = 0.0
 let mmax = 40.0
 let alphamin = -12.0
 let alphamax = 8.0
+let nmsamp = 1000
 
 let nsamp = ref 1000000
+let high_m = ref false
 
 let options = 
   [("-n", Arg.Set_int nsamp,
-    Printf.sprintf "number of samples to take (default %d)" !nsamp)]
+    Printf.sprintf "number of samples to take (default %d)" !nsamp);
+   ("-high-mass", Arg.Set high_m,
+    "include high-mass objects in sample")]
 
 module Interp = Interpolate_pdf.Make(struct
   type point = float array
@@ -369,7 +373,7 @@ let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log 
 let _ = 
   Random.self_init ();
   Arg.parse options (fun _ -> ()) "reversible_jump.{byte,native} OPTIONS ...";
-  let msamples = Masses.generate_samples 1000 in
+  let msamples = Masses.generate_samples !high_m nmsamp in
   let log_likelihood = log_likelihood msamples in 
   let s0 = jump_proposal (Histogram [||]) in (* Use dummy state. *)
   let current = ref {Mcmc.value = s0;

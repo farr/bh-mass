@@ -10,6 +10,7 @@ let alphamin = ref (-12.0)
 let alphamax = ref 8.0
 let outfile = ref "power-law.mcmc"
 let overwrite = ref false
+let high_m = ref false
 
 let options = 
   [("-nmsamp", Arg.Set_int nmsamp,
@@ -32,7 +33,9 @@ let options =
    ("-o", Arg.Set_string outfile, 
     sprintf "filename for output (default %s)" !outfile);
    ("-overwrite", Arg.Set overwrite,
-    "overwrite the output file")]
+    "overwrite the output file");
+   ("-high-mass", Arg.Set high_m,
+    "include high-mass objects in sample")]
 
 let log_likelihood msamples = function 
   | [|mmin; mmax; alpha|] -> 
@@ -125,7 +128,7 @@ let _ =
   Random.self_init ();
   Arg.parse options (fun _ -> ()) "power_law.{byte,native} ...";
   assert(!mmin > 0.0);
-  let msamples = Masses.generate_samples !nmsamp in 
+  let msamples = Masses.generate_samples !high_m !nmsamp in 
   let next = 
     Mcmc.make_mcmc_sampler 
       (fun x -> log_likelihood msamples x) log_prior jump_proposal log_jump_probability in

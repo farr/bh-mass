@@ -9,6 +9,7 @@ let nskip = ref 100
 let nbin = ref 10000
 let outfile = ref "gaussian.mcmc"
 let overwrite = ref false
+let high_m = ref false
 
 let options = 
   [("-mmin", Arg.Set_float mmin, 
@@ -27,7 +28,9 @@ let options =
    ("-o", Arg.Set_string outfile, 
     sprintf "output file for the mcmc (default %s)" !outfile);
    ("-overwrite", Arg.Set overwrite,
-    "overwrite the pre-existing MCMC samples in output file")]
+    "overwrite the pre-existing MCMC samples in output file");
+   ("-high-mass", Arg.Set high_m,
+    "use high-mass objects in sample")]
 
 let gaussian mu sigma x = 
   let d = mu -. x in 
@@ -68,7 +71,7 @@ let log_jump_prob _ _ = 0.0
 let _ = 
   Random.self_init ();
   Arg.parse options (fun _ -> ()) "gaussian.{byte,native} OPTIONS ...";
-  let msamples = Masses.generate_samples !nmsamp in
+  let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood musig = log_likelihood msamples musig in
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
   let s0 = [|8.0; 2.0|] in 

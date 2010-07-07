@@ -8,6 +8,7 @@ let overwrite = ref false
 let nbin = ref 10000
 let nmcmc = ref 30000
 let nskip = ref 100
+let high_m = ref false
 
 let options = 
   [("-mmin", Arg.Set_float mmin,
@@ -25,7 +26,9 @@ let options =
    ("-nbin", Arg.Set_int nbin,
     sprintf "number of MCMC samples to discard initially (default %d)" !nbin);
    ("-nskip", Arg.Set_int nskip,
-    sprintf "number of MCMC samples to discard between each output (default %d)" !nskip)]
+    sprintf "number of MCMC samples to discard between each output (default %d)" !nskip);
+   ("-high-mass", Arg.Set high_m,
+    "include high-mass objects in sample")]
 
 let gaussian mu sigma x = 
   let d = mu -. x in 
@@ -78,7 +81,7 @@ let log_jump_probability _ _ = 0.0
 let _ = 
   Random.self_init ();
   Arg.parse options (fun _ -> ()) "two_gaussian.{byte,native} OPTIONS ...";
-  let msamples = Masses.generate_samples !nmsamp in 
+  let msamples = Masses.generate_samples !high_m !nmsamp in 
   let s0 = [|8.0; 8.0; 2.0; 2.0; 0.5|] in
   let log_likelihood x = log_likelihood msamples x in
   let current = ref {Mcmc.value = s0;

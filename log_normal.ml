@@ -10,6 +10,7 @@ let nskip = ref 100
 let nbin = ref 10000
 let outfile = ref "log-normal.mcmc"
 let overwrite = ref false
+let high_m = ref false
 
 let options = 
   [("-mmin", Arg.Set_float mmin, 
@@ -28,12 +29,14 @@ let options =
    ("-o", Arg.Set_string outfile, 
     sprintf "output file for the mcmc (default %s)" !outfile);
    ("-overwrite", Arg.Set overwrite,
-    "overwrite the pre-existing MCMC samples in output file")]
+    "overwrite the pre-existing MCMC samples in output file");
+   ("-high-mass", Arg.Set high_m,
+    "use high-mass objects in sample")]
 
 let _ = 
   Random.self_init ();
   Arg.parse options (fun _ -> ()) "log_normal.{byte,native} OPTIONS ...";
-  let msamples = Masses.generate_samples !nmsamp in
+  let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood x = log_likelihood msamples x in
   let s0 = [|log 9.97; 0.01|] in 
   let current = ref {Mcmc.value = s0;

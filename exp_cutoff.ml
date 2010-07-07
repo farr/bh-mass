@@ -8,6 +8,7 @@ let nmcmc = ref 30000
 let nburnin = ref 10000
 let nskip = ref 100
 let overwrite = ref false
+let high_m = ref false
 
 let options = 
   [("-mmin", Arg.Set_float mmin,
@@ -27,7 +28,9 @@ let options =
    ("-nburnin", Arg.Set_int nburnin,
     sprintf "number of initial 'burn in' samples to discard (default %d)" !nburnin);
    ("-overwrite", Arg.Set overwrite,
-    "overwrite the output file instead of appending to it")]
+    "overwrite the output file instead of appending to it");
+   ("-high-mass", Arg.Set high_m,
+    "use high-mass objects in sample")]
 
 let log_likelihood msamples = function
   | [|mc; m0|] -> 
@@ -65,7 +68,7 @@ let log_jump_probability _ _ = 0.0
 let _ = 
   Random.self_init ();
   Arg.parse options (fun _ -> ()) "exp_cutoff.{byte,native} OPTIONS ...";
-  let samples = Masses.generate_samples !nmsamp in
+  let samples = Masses.generate_samples !high_m !nmsamp in
   let s0 = [|4.0; 1.0|] in 
   let current = ref {Mcmc.value = s0;
                      like_prior = {Mcmc.log_likelihood = log_likelihood samples s0;

@@ -11,6 +11,7 @@ let nmcmc = ref 30000
 let nburnin = ref 10000
 let nskip = ref 100
 let overwrite = ref false
+let high_m = ref false
 
 let options = 
   [("-nbinmax", Arg.Set_int nbinmax,
@@ -36,7 +37,9 @@ let options =
    ("-nburnin", Arg.Set_int nburnin,
     sprintf "number of initial 'burn in' samples to discard (default %d)" !nburnin);
    ("-overwrite", Arg.Set overwrite,
-    "overwrite the output file instead of appending to it")]
+    "overwrite the output file instead of appending to it");
+   ("-high-mass", Arg.Set high_m,
+    "use high-mass objects in sample")]
 
 let compare_float (x : float) y = Pervasives.compare x y
 
@@ -182,7 +185,7 @@ let _ =
         [(0.1, decrease_bins, log_decrease_bins_jp);
          (0.1, increase_bins, log_increase_bins_jp);
          (0.8, move_one_boundary, log_move_one_boundary_jp)] in
-  let samples = Masses.generate_samples !nmsamp in
+  let samples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood = log_likelihood samples in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_propose log_jump_prob in 
   let s0 = 
