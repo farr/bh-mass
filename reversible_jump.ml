@@ -380,7 +380,7 @@ let _ =
                      like_prior = {Mcmc.log_prior = log_prior s0;
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
-  let counts = Array.make 9 0 in 
+  let counts = Array.make 10 0 in 
     for i = 1 to !nsamp do
       current := next !current;
       accumulate_into_counter counts (!current).Mcmc.value
