@@ -117,7 +117,7 @@ let gs_2023 =
   make_mass_generator
     (fun () -> draw_gaussian 6.08 0.06)
     (fun () -> draw_uniform 0.056 0.063)
-    (fun () -> draw_gaussian (rad_of_deg 55.0) (rad_of_deg 4.0))
+    (fun () -> draw_isotropic (rad_of_deg 66.0) (rad_of_deg 70.0))
 
 (* Casares, et al 2009. *)
 let gs_1354 = 
