@@ -125,7 +125,7 @@ let (jump_proposal, log_jump_probability) =
      (1.0, tilt, log_tilt_jp)]
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "power_law.{byte,native} ...";
   assert(!mmin > 0.0);
   let msamples = Masses.generate_samples !high_m !nmsamp in 

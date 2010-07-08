@@ -29,7 +29,7 @@ let random_hist arr =
   Array.fast_sort compare_float arr
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "random_histogram.{byte,native} OPTIONS ...";
   let hist = Array.make (!nbin + 1) 0.0 in 
     for i = 0 to !nhist - 1 do 

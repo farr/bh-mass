@@ -14,7 +14,7 @@ let options =
     "include high-mass objects in sample")]
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "mass_hist.{byte,native} OPTIONS ...";
   let samples = Masses.generate_samples !high_m !nsamp in 
   let out = open_out !outfile in 

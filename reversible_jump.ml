@@ -371,7 +371,7 @@ let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log 
               "Histogram 5"|]
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "reversible_jump.{byte,native} OPTIONS ...";
   let msamples = Masses.generate_samples !high_m nmsamp in
   let log_likelihood = log_likelihood msamples in 

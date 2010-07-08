@@ -25,7 +25,7 @@ let options =
 let compare_float (x : float) y = Pervasives.compare x y
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "direct_evidence.{byte,native} OPTIONS ...";
   let inp = if !have_input_file then open_in !input_file else stdin in 
   let samples = Read_write.read (fun x -> x) inp in 

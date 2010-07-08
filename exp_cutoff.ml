@@ -66,7 +66,7 @@ let jump_proposal = function
 let log_jump_probability _ _ = 0.0
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "exp_cutoff.{byte,native} OPTIONS ...";
   let samples = Masses.generate_samples !high_m !nmsamp in
   let s0 = [|4.0; 1.0|] in 

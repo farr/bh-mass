@@ -177,7 +177,7 @@ let log_move_one_boundary_jp x y =
               log_index_factor -. (log (x.(ichange+1) -. x.(ichange-1)))
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "histogram.{byte,native} OPTIONS ...";
   let (jump_propose, log_jump_prob) = 
     if !fixedbin then (move_one_boundary, log_move_one_boundary_jp) else 

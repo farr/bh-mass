@@ -34,7 +34,7 @@ let options =
     "use high-mass objects in sample")]
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "log_normal.{byte,native} OPTIONS ...";
   let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood x = log_likelihood msamples x in

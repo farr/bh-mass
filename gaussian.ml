@@ -69,7 +69,7 @@ let jump_proposal = function
 let log_jump_prob _ _ = 0.0
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "gaussian.{byte,native} OPTIONS ...";
   let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood musig = log_likelihood msamples musig in

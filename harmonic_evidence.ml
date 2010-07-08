@@ -20,7 +20,7 @@ let options =
     sprintf "the number of bootstrap samples for error output (default %d)" !nsamp)]
 
 let _ = 
-  Random.self_init ();
+  Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "harmonic_evidence.{byte,native} OPTIONS ...";
   let inp = if !from_file then open_in !infile else stdin in 
   let samples = Read_write.read (fun x -> x) inp in 
