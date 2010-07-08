@@ -8,12 +8,15 @@ let nmsamp = 1000
 
 let nsamp = ref 1000000
 let high_m = ref false
+let outfile = ref "reversible-jump.dat"
 
 let options = 
   [("-n", Arg.Set_int nsamp,
     Printf.sprintf "number of samples to take (default %d)" !nsamp);
    ("-high-mass", Arg.Set high_m,
-    "include high-mass objects in sample")]
+    "include high-mass objects in sample");
+   ("-o", Arg.Set_string outfile,
+    Printf.sprintf "output file (default %s)" !outfile)]
 
 module Interp = Interpolate_pdf.Make(struct
   type point = float array
@@ -385,6 +388,6 @@ let _ =
       current := next !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
-    let out = open_out "reversible-jump.dat" in
+    let out = open_out !outfile in
       Array.iteri (fun i ct -> Printf.fprintf out "%d %% %s\n" ct names.(i)) counts;
       close_out out
