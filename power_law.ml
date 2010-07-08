@@ -1,41 +1,23 @@
 open Printf
+open Dist_base
 
-let nmsamp = ref 1000
-let mmin = ref 0.01
-let mmax = ref 40.0
-let nbin = ref 10000
-let nmcmc = ref 30000
-let nskip = ref 100
+let _ = mmin := 0.01
+
 let alphamin = ref (-12.0)
 let alphamax = ref 8.0
 let outfile = ref "power-law.mcmc"
 let overwrite = ref false
-let high_m = ref false
 
 let options = 
-  [("-nmsamp", Arg.Set_int nmsamp,
-    sprintf "number of samples from each mass PDF (default %d)" !nmsamp);
-   ("-mmin", Arg.Set_float mmin,
-    sprintf "minimum mass (default %g)" !mmin);
-   ("-mmax", Arg.Set_float mmax,
-    sprintf "maximum mass (default %g)" !mmax);
-   ("-nbin", Arg.Set_int nbin,
-    sprintf "number of burn-in samples to discard (default %d)" !nbin);
-   ("-nmcmc", Arg.Set_int nmcmc,
-    sprintf "number of MCMC samples to output (default %d)" !nmcmc);
-   ("-nskip", Arg.Set_int nskip,
-    sprintf "number of samples to skip between each output (default %d)" !nskip);
-   ("-alphamin", Arg.Set_float alphamin,
-    sprintf "minimum exponent (default %g)" !alphamin);
-   ("-alphamax", Arg.Set_float alphamax,
-    sprintf "maximum exponent (default %g)" !alphamax);
-   ("-seed", Arg.Int (fun s -> Random.init s), "seed for RNG");
-   ("-o", Arg.Set_string outfile, 
-    sprintf "filename for output (default %s)" !outfile);
-   ("-overwrite", Arg.Set overwrite,
-    "overwrite the output file");
-   ("-high-mass", Arg.Set high_m,
-    "include high-mass objects in sample")]
+  Arg.align
+    (base_opts @ [("-alphamin", Arg.Set_float alphamin,
+                   sprintf "minimum exponent (default %g)" !alphamin);
+                  ("-alphamax", Arg.Set_float alphamax,
+                   sprintf "maximum exponent (default %g)" !alphamax);
+                  ("-o", Arg.Set_string outfile, 
+                   sprintf "filename for output (default %s)" !outfile);
+                  ("-overwrite", Arg.Set overwrite,
+                   "overwrite the output file")])
 
 let log_likelihood msamples = function 
   | [|mmin; mmax; alpha|] -> 

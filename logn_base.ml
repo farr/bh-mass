@@ -1,5 +1,4 @@
-let mmin = ref 0.0
-let mmax = ref 40.0
+open Dist_base
 
 let msigma_to_musigma = function 
   | [|m; sigmam|] -> 

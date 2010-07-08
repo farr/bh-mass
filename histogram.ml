@@ -1,45 +1,24 @@
 open Printf
+open Dist_base
 
 let nbinmax = ref 5
 let fixedbin = ref false
-let nbin = ref 1
-let mmin = ref 0.0
-let mmax = ref 40.0
-let nmsamp = ref 1000
+let numbin = ref 1
 let outfile = ref "histogram.mcmc"
-let nmcmc = ref 30000
-let nburnin = ref 10000
-let nskip = ref 100
 let overwrite = ref false
-let high_m = ref false
 
 let options = 
-  [("-nbinmax", Arg.Set_int nbinmax,
-    sprintf "maximum number of bins to allow (default %d)" !nbinmax);
-   ("-fixedbin", Arg.Set fixedbin,
-    sprintf "fix the number of bins to the value of the nbin argument");
-   ("-nbin", Arg.Set_int nbin,
-    sprintf "number of bins to use when in fixedbin mode (default %d)" !nbin);
-   ("-mmin", Arg.Set_float mmin,
-    sprintf "minimum BH mass (default %g)" !mmin);
-   ("-mmax", Arg.Set_float mmax,
-    sprintf "maximum BH mass (default %g)" !mmax);
-   ("-seed", Arg.Int (fun s -> Random.init s),
-    "seed the RNG");
-   ("-nmsamp", Arg.Set_int nmsamp,
-    sprintf "number of samples to use from each system's mass distribution (default %d)" !nmsamp);
-   ("-o", Arg.Set_string outfile,
-    sprintf "output file name (default %s)" !outfile);
-   ("-nmcmc", Arg.Set_int nmcmc,
-    sprintf "number of MCMC samples to record (default %d)" !nmcmc);
-   ("-nskip", Arg.Set_int nskip,
-    sprintf "number of samples to skip between recording (default %d)" !nskip);
-   ("-nburnin", Arg.Set_int nburnin,
-    sprintf "number of initial 'burn in' samples to discard (default %d)" !nburnin);
-   ("-overwrite", Arg.Set overwrite,
-    "overwrite the output file instead of appending to it");
-   ("-high-mass", Arg.Set high_m,
-    "use high-mass objects in sample")]
+  Arg.align
+    (base_opts @ [("-nbinmax", Arg.Set_int nbinmax,
+                   sprintf "maximum number of bins to allow (default %d)" !nbinmax);
+                  ("-fixedbin", Arg.Set fixedbin,
+                   sprintf "fix the number of bins to the value of the nbin argument");
+                  ("-numbin", Arg.Set_int numbin,
+                   sprintf "number of bins to use when in fixedbin mode (default %d)" !numbin);
+                  ("-o", Arg.Set_string outfile,
+                   sprintf "output file name (default %s)" !outfile);
+                  ("-overwrite", Arg.Set overwrite,
+                   "overwrite the output file instead of appending to it")])
 
 let compare_float (x : float) y = Pervasives.compare x y
 
@@ -190,7 +169,7 @@ let _ =
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_propose log_jump_prob in 
   let s0 = 
     if !fixedbin then 
-      Array.init (!nbin + 1) 
+      Array.init (!numbin + 1) 
         (fun i -> 
           if i = 0 then !mmin else if i = 1 then !mmax else Stats.draw_uniform !mmin !mmax) 
     else
@@ -199,7 +178,7 @@ let _ =
   let current = ref {Mcmc.value = s0;
                      like_prior = {Mcmc.log_likelihood = log_likelihood s0;
                                    Mcmc.log_prior = log_prior s0}} in 
-    for i = 1 to !nburnin do 
+    for i = 1 to !nbin do 
       current := next !current
     done;
     let flags = [Open_wronly; Open_creat; Open_text] in 

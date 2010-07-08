@@ -1,34 +1,15 @@
 open Printf
+open Dist_base
 
-let mmin = ref 0.0
-let mmax = ref 40.0
-let nmsamp = ref 1000
 let outfile = ref "two-gaussian.mcmc"
 let overwrite = ref false
-let nbin = ref 10000
-let nmcmc = ref 30000
-let nskip = ref 100
-let high_m = ref false
 
 let options = 
-  [("-mmin", Arg.Set_float mmin,
-    sprintf "minimum mass (default %g)" !mmin);
-   ("-mmax", Arg.Set_float mmax,
-    sprintf "maximum mass (default %g)" !mmax);
-   ("-nmsamp", Arg.Set_int nmsamp,
-    sprintf "number of samples for each mass measurement (default %d)" !nmsamp);
-   ("-o", Arg.Set_string outfile,
-    sprintf "output filename (default %s)" !outfile);
-   ("-overwrite", Arg.Set overwrite,
-    "overwrite output file with new MCMC");
-   ("-nmcmc", Arg.Set_int nmcmc,
-    sprintf "number of MCMC samples to output (default %d)" !nmcmc);
-   ("-nbin", Arg.Set_int nbin,
-    sprintf "number of MCMC samples to discard initially (default %d)" !nbin);
-   ("-nskip", Arg.Set_int nskip,
-    sprintf "number of MCMC samples to discard between each output (default %d)" !nskip);
-   ("-high-mass", Arg.Set high_m,
-    "include high-mass objects in sample")]
+  Arg.align 
+    (base_opts @ [("-o", Arg.Set_string outfile,
+                   sprintf "output filename (default %s)" !outfile);
+                  ("-overwrite", Arg.Set overwrite,
+                   "overwrite output file with new MCMC")])
 
 let gaussian mu sigma x = 
   let d = mu -. x in 
