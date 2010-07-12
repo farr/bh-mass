@@ -1,7 +1,7 @@
 open Dist_base
 
-let alphamin = ref (-12.0)
-let alphamax = ref 8.0
+let alphamin = ref (-15.0)
+let alphamax = ref 10.0
 
 let log_likelihood msamples = function 
   | [|mmin; mmax; alpha|] -> 
