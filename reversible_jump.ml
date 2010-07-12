@@ -1,21 +1,15 @@
 open Rj_base
+open Dist_base
 module Ec = Expc_base
 module G = Gaussian_base
 module H = Histogram_base
+module Pl = Power_law_base
 
-let mmin = 0.0 
-let mmax = 40.0
-let alphamin = -12.0
-let alphamax = 8.0
-let nmsamp = 1000
-
-let nsamp = ref 1000000
-let high_m = ref false
 let outfile = ref "reversible-jump.dat"
 
 let options = 
-  [("-n", Arg.Set_int nsamp,
-    Printf.sprintf "number of samples to take (default %d)" !nsamp);
+  [("-n", Arg.Set_int nmcmc,
+    Printf.sprintf "number of samples to take (default %d)" !nmcmc);
    ("-high-mass", Arg.Set high_m,
     "include high-mass objects in sample");
    ("-o", Arg.Set_string outfile,
@@ -28,31 +22,6 @@ module Interp = Interpolate_pdf.Make(struct
 
   let point (c : float array) = c
 end)
-
-module Pl = struct 
-  let log_likelihood msamples = function 
-    | [|mmin; mmax; alpha|] -> 
-      let ap1 = alpha +. 1.0 in 
-      let norm = ap1 /. (mmax**ap1 -. mmin**ap1) in
-        List.fold_left
-          (fun ll (msamp : float array) -> 
-            let overlap = ref 0.0 and
-                nsamp = Array.length msamp in
-              for i = 0 to nsamp - 1 do 
-                let m = msamp.(i) in 
-                  if mmin <= m && m <= mmax then
-                    overlap := !overlap +. norm*.m**alpha
-              done;
-              ll +. log (!overlap /. (float_of_int nsamp)))
-          0.0
-          msamples
-    | _ -> raise (Invalid_argument "log_likelihood: bad state")
-
-  let log_prior _ = 
-    let dm = mmax -. mmin in 
-    let x = 2.0 /. ((alphamax -. alphamin) *. dm *. dm) in 
-      log x
-end
 
 module Tg = struct 
   let gaussian mu sigma x = 
@@ -76,9 +45,9 @@ module Tg = struct
     | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
   let log_prior1 mu sigma = 
-    if mu >= mmin && mu <= mmax && sigma >= 0.0 && 
-      mu +. 2.0*.sigma <= mmax && mu -. 2.0*.sigma >= mmin then 
-      2.0794415416798359283 -. 2.0*.(log (mmax -. mmin))
+    if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
+      mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin then 
+      2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
     else
       neg_infinity
 
@@ -145,19 +114,19 @@ let hinterps =
                 "histogram-5bin.mcmc"|] in 
     Array.mapi 
       (fun i file -> 
-        interp_from_file file (Array.make (i+2) mmin) (Array.make (i+2) mmax))
+        interp_from_file file (Array.make (i+2) !mmin) (Array.make (i+2) !mmax))
       files
 
-let ginterp = interp_from_file "gaussian.mcmc" [|mmin; 0.0|] [|mmax; 0.25*.(mmax-.mmin)|]
+let ginterp = interp_from_file "gaussian.mcmc" [|!mmin; 0.0|] [|!mmax; 0.25*.(!mmax-. !mmin)|]
 
-let pinterp = interp_from_file "power-law.mcmc" [|mmin; mmin; alphamin|] [|mmax; mmax; alphamax|]
+let pinterp = interp_from_file "power-law.mcmc" [|!mmin; !mmin; !Power_law_base.alphamin|] [|!mmax; !mmax; !Power_law_base.alphamax|]
 
-let einterp = interp_from_file "exp-cutoff.mcmc" [|mmin; 0.0|] [|mmax; 0.5*.(mmin-.mmax)|]
+let einterp = interp_from_file "exp-cutoff.mcmc" [|!mmin; 0.0|] [|!mmax; 0.5*.(!mmin-. !mmax)|]
 
 let tginterp = 
   interp_from_file "two-gaussian.mcmc" 
-    [|mmin; mmin; 0.0; 0.0; 0.0|] 
-    [|mmax; mmax; 0.25*.(mmax -. mmin); 0.25*.(mmax-.mmin); 1.0|]
+    [|!mmin; !mmin; 0.0; 0.0; 0.0|] 
+    [|!mmax; !mmax; 0.25*.(!mmax -. !mmin); 0.25*.(!mmax-. !mmin); 1.0|]
 
 let lninterp = 
   interp_from_file "log-normal.mcmc"
@@ -273,7 +242,7 @@ let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log 
 let _ = 
   Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "reversible_jump.{byte,native} OPTIONS ...";
-  let msamples = Masses.generate_samples !high_m nmsamp in
+  let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood = log_likelihood msamples in 
   let s0 = jump_proposal (Histogram [||]) in (* Use dummy state. *)
   let current = ref {Mcmc.value = s0;
@@ -281,7 +250,7 @@ let _ =
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
   let counts = Array.make 10 0 in 
-    for i = 1 to !nsamp do
+    for i = 1 to !nmcmc do
       current := next !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
