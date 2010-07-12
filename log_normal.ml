@@ -16,7 +16,7 @@ let _ =
   Randomize.randomize ();
   Arg.parse options (fun _ -> ()) "log_normal.{byte,native} OPTIONS ...";
   let msamples = Masses.generate_samples !high_m !nmsamp in
-  let log_likelihood x = log_likelihood msamples x in
+  let log_likelihood x = Logn_base.log_likelihood msamples x in
   let s0 = [|log 9.97; 0.01|] in 
   let current = ref {Mcmc.value = s0;
                      like_prior = {Mcmc.log_prior = log_prior s0;
