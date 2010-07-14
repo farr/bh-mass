@@ -8,13 +8,13 @@ blackHistogram();
 axis([0 30 0 inf])
 xlabel('M')
 ylabel('dN/dM')
-print -deps '../Paper/plots/masses.eps'
+print -deps '../../Paper/plots/masses.eps'
 
 % Harmonic and Direct Evidence.
 curFig=curFig+1;
 figure(curFig);
 colordef white;
-xs = 0:8;
+xs = 0:9;
 harmEvData=[importdata('power-law.mcmc.ev');
             importdata('exp-cutoff.mcmc.ev');
             importdata('gaussian.mcmc.ev');
@@ -42,21 +42,21 @@ axis([-0.5 8.5 -inf inf])
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
 ylabel('p(d|M_i)')
 legend('Direct Integration Evidence','Harmonic Mean Evidence')
-print -deps '../Paper/plots/evidence.eps'
+print -deps '../../Paper/plots/evidence.eps'
 hold off
 
 % Reverse Jump Evidence
-curFig = curFig + 1;
-figure(curFig);
-colordef white;
-
-rjEvData=importdata('reversible-jump.dat');
-xs=0:(length(rjEvData)-1);
-semilogy(xs,rjEvData, 'xk');
-axis([-0.5 8.5 0.5*min(rjEvData) 1.5*max(rjEvData)]);
-set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
-ylabel('Counts');
-print -deps '../Paper/plots/rj.eps'
+% curFig = curFig + 1;
+% figure(curFig);
+% colordef white;
+% 
+% rjEvData=importdata('reversible-jump.dat');
+% xs=0:(length(rjEvData)-1);
+% semilogy(xs,rjEvData, 'xk');
+% axis([-0.5 8.5 0.5*min(rjEvData) 1.5*max(rjEvData)]);
+% set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
+% ylabel('Counts');
+% print -deps '../../Paper/plots/rj.eps'
 
 % Parameteric Distributions
 curFig = curFig + 1;
@@ -98,11 +98,11 @@ ylabel('dN/dM')
 subplot(nx,ny,5)
 data=importdata('log-normal.mcmc.dist');
 errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
-axis[mmin mmax ymin ymax]);
+axis([mmin mmax ymin ymax]);
 title('Log Normal');
 xlabel('M')
 ylabel('dN/dM')
-print -deps '../Paper/plots/dist-parameteric.eps'
+print -deps '../../Paper/plots/dist-parameteric.eps'
 
 % Non-Parameteric Distributions
 curFig = curFig + 1;
@@ -148,7 +148,7 @@ axis([mmin mmax ymin ymax]);
 title('Histogram (5 Bin)');
 xlabel('M');
 ylabel('dN/dM');
-print -deps '../Paper/plots/dist-non-parameteric.eps'
+print -deps '../../Paper/plots/dist-non-parameteric.eps'
 
 % Mass Plots
 curFig = curFig + 1;
@@ -178,7 +178,7 @@ for i = 1:length(filenames)
     ylabel('dN/dM')
     title(names{i})
 end
-print -deps '../Paper/plots/all-masses.eps'
+print -deps '../../Paper/plots/all-masses.eps'
 
 % Power-law Plots
 curFig = curFig + 1;
@@ -188,7 +188,7 @@ normalizedHist(data(:,3),200);
 blackHistogram();
 xlabel('\alpha');
 ylabel('dN/d\alpha');
-print -deps '../Paper/plots/alpha.eps'
+print -deps '../../Paper/plots/alpha.eps'
 
 % Parameteric Mmin plots
 curFig = curFig + 1;
@@ -208,7 +208,7 @@ for i = 1:length(files)
     xlabel('M_{min}');
     ylabel('dN/dM_{min}');
 end
-print -deps '../Paper/plots/mmin-parameteric.eps'
+print -deps '../../Paper/plots/mmin-parameteric.eps'
 
 % Nonparameteric Mmin plots
 curFig = curFig + 1;
@@ -230,7 +230,7 @@ for i = 1:length(files)
     xlabel('M_{min}');
     ylabel('dN/dM_{min}');
 end
-print -deps '../Paper/plots/mmin-non-parameteric.eps'
+print -deps '../../Paper/plots/mmin-non-parameteric.eps'
 
 % Exponential M_0 plots
 curFig=curFig+1;
@@ -240,7 +240,7 @@ normalizedHist(data(:,2),100);
 blackHistogram();
 xlabel('M_0');
 ylabel('dN/dM_0');
-print -deps '../Paper/plots/exp-m0.eps'
+print -deps '../../Paper/plots/exp-m0.eps'
 
 % Gaussian Mean, Sigma Plots.
 curFig=curFig+1;
@@ -257,4 +257,4 @@ normalizedHist(data(:,2));
 blackHistogram();
 xlabel('\sigma');
 ylabel('dN/d\sigma');
-print -deps '../Paper/plots/gaussian.eps'
+print -deps '../../Paper/plots/gaussian.eps'

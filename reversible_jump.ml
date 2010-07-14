@@ -9,12 +9,9 @@ module Tg = Two_gaussian_base
 let outfile = ref "reversible-jump.dat"
 
 let options = 
-  [("-n", Arg.Set_int nmcmc,
-    Printf.sprintf "number of samples to take (default %d)" !nmcmc);
-   ("-high-mass", Arg.Set high_m,
-    "include high-mass objects in sample");
-   ("-o", Arg.Set_string outfile,
-    Printf.sprintf "output file (default %s)" !outfile)]
+  Arg.align 
+    (base_opts @ [("-o", Arg.Set_string outfile,
+                   Printf.sprintf "output file (default %s)" !outfile)])
 
 module Interp = Interpolate_pdf.Make(struct
   type point = float array
@@ -212,7 +209,7 @@ let _ =
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
   let counts = Array.make 10 0 in 
-    for i = 1 to !nmcmc do
+    for i = 1 to !nmcmc*(!nskip) + !nbin do
       current := next !current;
       accumulate_into_counter counts (!current).Mcmc.value
     done;

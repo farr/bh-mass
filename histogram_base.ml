@@ -45,7 +45,21 @@ let log_factorial n =
     done;
     !sum
 
+let sorted_float_array (arr : float array) = 
+  let n = Array.length arr in 
+  let rec loop i = 
+    if i >= n - 1 then 
+      true
+    else
+      let x = arr.(i) and 
+          y = arr.(i+1) in 
+        (x <= y) && loop (i+1) in 
+    loop 0
+
 let log_prior bins = 
   let log_bin_factor = if !fixedbin then 0.0 else ~-.(log (float_of_int !nbinmax)) in
   let n = Array.length bins in 
-    (log_factorial n) +. log_bin_factor -. (float_of_int n)*.(log (!mmax -. !mmin))
+    if sorted_float_array bins then (* Need this test because RJMCMC sometimes will give unsorted bins. *)
+      (log_factorial n) +. log_bin_factor -. (float_of_int n)*.(log (!mmax -. !mmin))
+    else
+      neg_infinity
