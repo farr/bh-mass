@@ -149,8 +149,13 @@ let _ =
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
   let counts = Array.make 10 0 in 
-    for i = 1 to !nmcmc*(!nskip) + !nbin do
-      current := next !current;
+    for i = 1 to !nbin do 
+      current := next !current
+    done;
+    for i = 1 to !nmcmc do
+      for i = 1 to !nskip do
+        current := next !current
+      done;
       accumulate_into_counter counts (!current).Mcmc.value
     done;
     let out = open_out !outfile in
