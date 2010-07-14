@@ -21,10 +21,13 @@ let log_likelihood msamples = function
       msamples
   | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
-let log_prior [|minm; maxm; alpha|] = 
-  if !mmin <= minm && maxm <= !mmax && minm < maxm && !alphamin <= alpha && alpha <= !alphamax then 
-    let dm = !mmax -. !mmin in 
-    let x = 2.0 /. ((!alphamax -. !alphamin) *. dm *. dm) in 
-      log x
-  else
-    neg_infinity
+let log_prior state = 
+  match state with 
+    | [|minm; maxm; alpha|] ->
+      if !mmin <= minm && maxm <= !mmax && minm < maxm && !alphamin <= alpha && alpha <= !alphamax then 
+        let dm = !mmax -. !mmin in 
+        let x = 2.0 /. ((!alphamax -. !alphamin) *. dm *. dm) in 
+          log x
+      else
+        neg_infinity
+    | _ -> raise (Invalid_argument "log_prior: bad state")

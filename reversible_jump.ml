@@ -107,77 +107,17 @@ let constr =
 
 let compare_float (x : float) y = Pervasives.compare x y
 
-(* The fixup functions below deal with the fact that the interpolating
-   function lives on a cubical domain, while some of the parameter
-   spaces here are only a corner of the cube; so, the interpolating
-   proposal may propose parameters outside the corner, in which case
-   they need to be mapped into the corner, and the jump probabilities
-   need to change accordingly. *)
-let hist_jump_fixup proposed_bins = 
-  let pbs = Array.copy proposed_bins in 
-    Array.fast_sort compare_float pbs;
-    pbs
-
-let pl_jump_fixup = function 
-  | [|mmin; mmax; alpha|] as s -> 
-    if mmin > mmax then 
-      [|mmax; mmin; alpha|]
-    else
-      s
-  | _ -> raise (Invalid_argument "pl_fixup: bad state")
-
-let log_sum_logs l1 l2 = 
-  if l1 > l2 then 
-    let lr = l2 -. l1 in 
-      l1 +. (log (1.0 +. (exp lr)))
-  else
-    let lr = l1 -. l2 in 
-      l2 +. (log (1.0 +. (exp lr)))
-
-let hist_jump_prob_fixup log_jp state = 
-  let perms = permutations state in 
-    List.fold_left
-      (fun sum state -> log_sum_logs sum (log_jp state))
-      neg_infinity
-      perms
-
-let pl_jump_prob_fixup log_jp = function 
-  | [|mmin; mmax; alpha|] as state -> 
-    log_sum_logs (log_jp state) (log_jp [|mmax; mmin; alpha|])
-  | _ -> raise (Invalid_argument "pl_jump_prob_fixup: bad state")
-
 let jump_proposal _ = 
   let i = Random.int (Array.length interps) in 
   let state = Interp.draw interps.(i) in 
-    if i <= 4 then 
-      constr.(i) (hist_jump_fixup state)
-    else if i = 6 then 
-      constr.(i) (pl_jump_fixup state)
-    else
-      constr.(i) state
+    constr.(i) state
 
 (* Leave off the 1/9 factor for each model being equally likely.  *)
 let log_jump_prob _ = function 
-  | Histogram(state) -> 
+  | Histogram(state) | Gaussian(state) | Power_law(state) | Exp_cutoff(state) 
+  | Two_gaussian(state) | Log_normal(state) -> 
     let interp = interps.(Array.length state - 2) in 
-    let log_jp = fun state -> log (Interp.jump_prob interp () state) in 
-      hist_jump_prob_fixup log_jp state
-  | Gaussian(state) -> 
-    let interp = interps.(5) in 
-      log (Interp.jump_prob interp () state)
-  | Power_law(state) -> 
-    let interp = interps.(6) in 
-    let jp state = log (Interp.jump_prob interp () state) in 
-      pl_jump_prob_fixup jp state
-  | Exp_cutoff(state) -> 
-    let interp = interps.(7) in 
-      log (Interp.jump_prob interp () state)
-  | Two_gaussian(state) -> 
-    let interp = interps.(8) in 
-      log (Interp.jump_prob interp () state)
-  | Log_normal(state) -> 
-    let interp = interps.(9) in 
-      log (Interp.jump_prob interp () state)
+    log (Interp.jump_prob interp () state)
 
 let accumulate_into_counter counters = function 
   | Power_law(_) -> 
