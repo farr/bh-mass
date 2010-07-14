@@ -143,7 +143,15 @@ let _ =
   Arg.parse options (fun _ -> ()) "reversible_jump.{byte,native} OPTIONS ...";
   let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood = log_likelihood msamples in 
-  let s0 = jump_proposal (Histogram [||]) in (* Use dummy state. *)
+  let s0 = 
+    let rec loop () = (* Needed to ensure that we don't start with an outlawed state. *)
+      let prop = jump_proposal (Histogram [||]) in (* Use dummy state. *)
+        if log_likelihood prop +. log_prior prop > neg_infinity then 
+          prop
+        else
+          loop () in 
+      loop () in 
+    Printf.eprintf "Found initial state!\n%!";
   let current = ref {Mcmc.value = s0;
                      like_prior = {Mcmc.log_prior = log_prior s0;
                                    log_likelihood = log_likelihood s0}} in 
@@ -152,6 +160,7 @@ let _ =
     for i = 1 to !nbin do 
       current := next !current
     done;
+    Printf.eprintf "Done with burn-in.\n%!";
     for i = 1 to !nmcmc do
       for i = 1 to !nskip do
         current := next !current
