@@ -38,7 +38,7 @@ dirEvData=[importdata('power-law.mcmc.ev.direct');
 semilogy(xs,dirEvData, 'xk');
 hold on;
 errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
-axis([-0.5 8.5 -inf inf])
+axis([-0.5 9.5 -inf inf])
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
 ylabel('p(d|M_i)')
 legend('Direct Integration Evidence','Harmonic Mean Evidence')
@@ -46,17 +46,16 @@ print -deps '../../Paper/plots/evidence.eps'
 hold off
 
 % Reverse Jump Evidence
-% curFig = curFig + 1;
-% figure(curFig);
-% colordef white;
-% 
-% rjEvData=importdata('reversible-jump.dat');
-% xs=0:(length(rjEvData)-1);
-% semilogy(xs,rjEvData, 'xk');
-% axis([-0.5 8.5 0.5*min(rjEvData) 1.5*max(rjEvData)]);
-% set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
-% ylabel('Counts');
-% print -deps '../../Paper/plots/rj.eps'
+curFig = curFig + 1;
+figure(curFig);
+colordef white;
+rjData=importdata('reversible-jump.dat');
+xs=0:(length(rjEvData)-1);
+errorbar(xs, rjData(:,1), rjData(:,1)-rjData(:,2), rjData(:,3)-rjData(:,1),'+k')
+axis([-0.5 9.5 -inf inf]);
+set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
+ylabel('Relative Probability');
+print -deps '../../Paper/plots/rj.eps'
 
 % Parameteric Distributions
 curFig = curFig + 1;
@@ -184,11 +183,34 @@ print -deps '../../Paper/plots/all-masses.eps'
 curFig = curFig + 1;
 figure(curFig);
 data=importdata('power-law.mcmc');
+subplot(2,2,1);
+normalizedHist(data(:,1),200);
+blackHistogram();
+xlabel('M_{min}');
+ylabel('dN/dM_{min}');
+subplot(2,2,2);
+normalizedHist(data(:,2),200);
+blackHistogram();
+xlabel('M_{max}');
+ylabel('dN/dM_{max}');
+subplot(2,2,[3 4]);
 normalizedHist(data(:,3),200);
 blackHistogram();
 xlabel('\alpha');
 ylabel('dN/d\alpha');
-print -deps '../../Paper/plots/alpha.eps'
+print -deps '../../Paper/plots/power-law.eps'
+
+% % 2D alpha/Mmin correlations -- no so useful
+% curFig=curFig+1;
+% figure(curFig);
+% data=importdata('power-law.mcmc');
+% colormap('Gray');
+% hdata=data(:,[1 3]);
+% hist3d(4:0.05:8, -15:0.5:10, hdata);
+% xlabel('M_{min}');
+% ylabel('\alpha');
+% zlabel('dN/dM_{min}d\alpha');
+% print -deps '../../Paper/plots/power-law-mmin-alpha.eps'
 
 % Parameteric Mmin plots
 curFig = curFig + 1;
@@ -236,11 +258,17 @@ print -deps '../../Paper/plots/mmin-non-parameteric.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('exp-cutoff.mcmc');
+subplot(2,1,1);
+normalizedHist(data(:,1),100);
+blackHistogram();
+xlabel('M_{min}');
+ylabel('dN/dM_{min}');
+subplot(2,1,2);
 normalizedHist(data(:,2),100);
 blackHistogram();
 xlabel('M_0');
 ylabel('dN/dM_0');
-print -deps '../../Paper/plots/exp-m0.eps'
+print -deps '../../Paper/plots/exp-cutoff.eps'
 
 % Gaussian Mean, Sigma Plots.
 curFig=curFig+1;
@@ -258,3 +286,53 @@ blackHistogram();
 xlabel('\sigma');
 ylabel('dN/d\sigma');
 print -deps '../../Paper/plots/gaussian.eps'
+
+% Log Normal
+curFig=curFig+1;
+figure(curFig);
+data=importdata('log-normal.mcmc');
+nx=2;ny=1;
+subplot(nx,ny,1);
+normalizedHist(data(:,1),100);
+blackHistogram();
+xlabel('<m>');
+ylabel('dN/d<m>');
+subplot(nx,ny,2);
+normalizedHist(data(:,2),100);
+blackHistogram();
+xlabel('\sigma_m');
+ylabel('dN/d\sigma_m');
+print -deps '../../Paper/plots/log-normal.eps'
+
+% Two Gaussian
+curFig=curFig+1;
+figure(curFig);
+data=importdata('two-gaussian.mcmc');
+nx=3;ny=2;
+subplot(nx,ny,1);
+normalizedHist(data(:,1),100);
+blackHistogram();
+xlabel('\mu_1');
+ylabel('dN/d\mu_1');
+subplot(nx,ny,2);
+normalizedHist(data(:,3),100);
+blackHistogram();
+xlabel('\sigma_1');
+ylabel('dN/d\sigma_1');
+subplot(nx,ny,3);
+normalizedHist(data(:,2),100);
+blackHistogram();
+xlabel('\mu_2');
+ylabel('dN/d\mu_2');
+subplot(nx,ny,4);
+normalizedHist(data(:,4),100);
+blackHistogram();
+xlabel('\sigma_2');
+ylabel('dN/d\sigma_2');
+subplot(nx,ny,[5 6]);
+normalizedHist(data(:,5),100);
+blackHistogram();
+xlabel('\alpha');
+ylabel('dN/d\alpha');
+print -deps '../../Paper/plots/two-gaussian.eps'
+
