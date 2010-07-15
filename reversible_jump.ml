@@ -94,6 +94,20 @@ let lninterp =
 
 let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp; lninterp|]
 
+let interp_of_state = function 
+  | Histogram(state) -> 
+    hinterps.(Array.length state - 2)
+  | Gaussian(_) -> ginterp
+  | Power_law(_) -> pinterp
+  | Exp_cutoff(_) -> einterp
+  | Two_gaussian(_) -> tginterp
+  | Log_normal(_) -> lninterp
+
+let array_of_state = function 
+  | Histogram(state) | Gaussian(state) | Power_law(state) 
+  | Exp_cutoff(state) | Two_gaussian(state) | Log_normal(state) -> 
+    state
+
 let _ = Printf.eprintf "Done with interpolations.\n%!"
 
 let constr = 
@@ -113,11 +127,9 @@ let jump_proposal _ =
     constr.(i) state
 
 (* Leave off the 1/9 factor for each model being equally likely.  *)
-let log_jump_prob _ = function 
-  | Histogram(state) | Gaussian(state) | Power_law(state) | Exp_cutoff(state) 
-  | Two_gaussian(state) | Log_normal(state) -> 
-    let interp = interps.(Array.length state - 2) in 
-    log (Interp.jump_prob interp () state)
+let log_jump_prob _ state = 
+  let interp = interp_of_state state in 
+    Interp.jump_prob interp () (array_of_state state)
 
 let accumulate_into_counter counters = function 
   | Power_law(_) -> 
