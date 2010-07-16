@@ -165,3 +165,9 @@ let high_names = ["cyg-x1"; "m33-x7"]
 let generate_samples high nsamp = 
   let generators = if high then generators @ high_generators else generators in
     List.map (fun gen -> Array.init nsamp (fun _ -> gen ())) generators
+
+let get_names high = 
+  if high then 
+    names @ high_names
+  else
+    names
