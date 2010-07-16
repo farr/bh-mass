@@ -10,6 +10,18 @@ xlabel('M')
 ylabel('dN/dM')
 print -deps '../../Paper/plots/masses.eps'
 
+% High masses
+curFig=curFig+1;
+figure(curFig);
+colordef white;
+massData=importdata('high-mass/masses.dat');
+normalizedHist(massData, 1000);
+blackHistogram();
+axis([0 40 -inf inf]);
+xlabel('M');
+ylabel('dN/dM');
+print -deps '../../Paper/plots/masses-high.eps'
+
 % Harmonic and Direct Evidence.
 curFig=curFig+1;
 figure(curFig);
@@ -50,7 +62,7 @@ curFig = curFig + 1;
 figure(curFig);
 colordef white;
 rjData=importdata('reversible-jump.dat');
-xs=0:(length(rjEvData)-1);
+xs=0:(length(rjData)-1);
 errorbar(xs, rjData(:,1), rjData(:,1)-rjData(:,2), rjData(:,3)-rjData(:,1),'+k')
 axis([-0.5 9.5 -inf inf]);
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
@@ -178,6 +190,28 @@ for i = 1:length(filenames)
     title(names{i})
 end
 print -deps '../../Paper/plots/all-masses.eps'
+
+% High mass plots
+curFig=curFig+1;
+figure(curFig);
+nx=3; ny=2;
+filenames={'high-mass/masses-cyg-x1.dat';
+           'high-mass/masses-m33-x7.dat';
+           'high-mass/masses-ic10-x1.dat';
+           'high-mass/masses-ngc300-x1.dat';
+           'high-mass/masses-lmc-x1.dat'};
+names={'Cyg X1'; 'M33 X7'; 'IC10 X1'; 'NGC300 X1'; 'LMC X1'};
+for i = 1:length(filenames)
+    subplot(nx,ny,i);
+    data=importdata(filenames{i});
+    normalizedHist(data);
+    blackHistogram();
+    axis([0 80 -inf inf]);
+    xlabel('M');
+    ylabel('dN/dM');
+    title(names{i})
+end
+print -deps '../../Paper/plots/high-masses.eps'
 
 % Power-law Plots
 curFig = curFig + 1;
