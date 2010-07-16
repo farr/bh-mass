@@ -147,12 +147,33 @@ let gs_2000 =
     (fun () -> draw_uniform 0.035 0.053)
     (fun () -> draw_isotropic (rad_of_deg 43.0) (rad_of_deg 74.0))
 
+(* Prestwich, et al 2007 and Silverman & Filippenko 2008. (WAG) *)
+let ic10_x1 = 
+  make_mass_generator
+    (fun () -> draw_gaussian 7.64 1.26) 
+    (fun () -> draw_uniform 0.7 1.7) (* BH 23, companion between 17 and 40. *)
+    (fun () -> draw_isotropic (rad_of_deg 75.0) (rad_of_deg 90.0)) (* Deep eclipses, so high? *)
+
+(* Crowther, et al 2010. *)
+let ngc300_x1 = 
+  make_mass_generator
+    (fun () -> draw_gaussian 2.6 0.3)
+    (fun () -> draw_uniform 1.05 1.65)
+    (fun () -> draw_isotropic (rad_of_deg 60.0) (rad_of_deg 75.0))
+
+(* Orosz, et al 2009 *)
+let lmc_x1 = 
+  make_mass_generator
+    (fun () -> draw_gaussian 0.148 0.004)
+    (fun () -> draw_gaussian 2.91 0.49)
+    (fun () -> draw_gaussian (rad_of_deg 36.38) (rad_of_deg 2.02))
+
 let generators = 
   [grs_1915; xte_j1118; xte_j1650; grs_1009; 
    a0620; gro_j0422; nova_mus_1991; gro_j1655; v4641_sgr;
    u4_1543; xte_j1550; gs_2023; gs_1354; nova_oph_77; gs_2000]
 
-let high_generators = [cyg_x1; m33_x7]
+let high_generators = [cyg_x1; m33_x7; ic10_x1; ngc300_x1; lmc_x1]
 
 let names = 
   ["grs-1915"; "xte-j1118"; "xte-j1650";
@@ -160,7 +181,7 @@ let names =
    "gro-j1655"; "v4641-sgr"; "u4-1543"; "xte-j1550"; "gs-2023"; "gs-1354";
    "nova-oph-77"; "gs-2000"]
 
-let high_names = ["cyg-x1"; "m33-x7"]
+let high_names = ["cyg-x1"; "m33-x7"; "ic10-x1"; "ngc300-x1"; "lmc-x1"]
 
 let generate_samples high nsamp = 
   let generators = if high then generators @ high_generators else generators in

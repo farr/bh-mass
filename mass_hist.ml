@@ -29,4 +29,3 @@ let _ =
           Array.iter (fun m -> fprintf out "%g\n" m) samps;
           close_out out)
       (Masses.get_names !high_m) samples
-          
