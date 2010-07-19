@@ -7,11 +7,15 @@ module Pl = Power_law_base
 module Tg = Two_gaussian_base
 
 let outfile = ref "reversible-jump.dat"
+let sampfile = ref ""
+let should_samp = ref false
 
 let options = 
   Arg.align 
     (base_opts @ [("-o", Arg.Set_string outfile,
-                   Printf.sprintf "output file (default %s)" !outfile)])
+                   Printf.sprintf "output file (default %s)" !outfile);
+                  ("-sampfile", Arg.String (fun s -> should_samp := true; sampfile := s),
+                   "output mcmc samples to file")])
 
 module Interp = Interpolate_pdf.Make(struct
   type point = float array
@@ -119,6 +123,32 @@ let constr =
       (fun x -> Two_gaussian x);
       (fun x -> Log_normal x)|]
 
+let write_state_to_array = function 
+  | Histogram(state) -> 
+    let n = Array.length state - 2 in 
+      Array.append [|float_of_int n|] state
+  | Gaussian(state) -> 
+    Array.append [|5.0|] state
+  | Power_law(state) -> 
+    Array.append [|6.0|] state
+  | Exp_cutoff(state) -> 
+    Array.append [|7.0|] state
+  | Two_gaussian(state) -> 
+    Array.append [|8.0|] state
+  | Log_normal(state) -> 
+    Array.append [|9.0|] state
+
+let read_state_from_array arr = 
+  let n = Array.length arr in
+    match arr.(0) with 
+      | 0.0 | 1.0 | 2.0 | 3.0 | 4.0 -> Histogram(Array.sub arr 1 (n-1))
+      | 5.0 -> Gaussian(Array.sub arr 1 (n-1))
+      | 6.0 -> Power_law(Array.sub arr 1 (n-1))
+      | 7.0 -> Exp_cutoff(Array.sub arr 1 (n-1))
+      | 8.0 -> Two_gaussian(Array.sub arr 1 (n-1))
+      | 9.0 -> Log_normal(Array.sub arr 1 (n-1))
+      | _ -> raise (Invalid_argument "read_state_from_array: bad state")
+                                                   
 let compare_float (x : float) y = Pervasives.compare x y
 
 (* The fixup functions below deal with the fact that the interpolating
@@ -238,12 +268,19 @@ let _ =
       current := next !current
     done;
     Printf.eprintf "Done with burn-in.\n%!";
+    let maybe_out = if !should_samp then Some (open_out !sampfile) else None in
     for i = 1 to !nmcmc do
       for i = 1 to !nskip do
         current := next !current
       done;
+      (match maybe_out with 
+        | Some(out) -> Read_write.write_sample write_state_to_array out !current
+        | None -> ());
       accumulate_into_counter counts (!current).Mcmc.value
     done;
-    let out = open_out !outfile in
-      Array.iteri (fun i ct -> Printf.fprintf out "%d %% %s\n" ct names.(i)) counts;
-      close_out out
+      (match maybe_out with 
+        | Some(out) -> close_out out
+        | None -> ());
+      let out = open_out !outfile in
+        Array.iteri (fun i ct -> Printf.fprintf out "%d %% %s\n" ct names.(i)) counts;
+        close_out out
