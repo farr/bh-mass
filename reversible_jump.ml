@@ -141,7 +141,10 @@ let pl_jump_fixup = function
   | _ -> raise (Invalid_argument "pl_fixup: bad state")
 
 let log_sum_logs l1 l2 = 
-  if l1 > l2 then 
+  (* Special-case neg_infinity. *)
+  if l1 = neg_infinity && l2 = neg_infinity then 
+    neg_infinity
+  else if l1 > l2 then 
     let lr = l2 -. l1 in 
       l1 +. (log (1.0 +. (exp lr)))
   else
