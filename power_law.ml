@@ -18,34 +18,83 @@ let options =
                   ("-overwrite", Arg.Set overwrite,
                    "overwrite the output file")])
 
-let jump_proposal = function 
+let jump_tilt = function 
   | [|min_mass; max_mass; alpha|] -> 
-    let mid_mass = 0.5*.(min_mass +. max_mass) in 
-    let min_min = max !mmin (min_mass -. 1.0) and 
-        min_max = min mid_mass (min_mass +. 1.0) and 
-        max_min = max mid_mass (max_mass -. 1.0) and 
-        max_max = min !mmax (max_mass +. 1.0) in 
-    let amin = max !alphamin (alpha -. 0.1) and 
-        amax = min !alphamax (alpha +. 0.1) in 
-      [|Stats.draw_uniform min_min min_max;
-        Stats.draw_uniform max_min max_max;
-        Stats.draw_uniform amin amax|]
-  | _ -> raise (Invalid_argument "jump_proposal: bad state")
+    [|min_mass; max_mass;
+      Mcmc.uniform_wrapping !alphamin !alphamax 1.0 alpha|]
+  | _ -> raise (Invalid_argument "jump_tilt: bad state")
 
-let log_jump_probability source _ = 
-  match source with 
-    | [|min_mass; max_mass; alpha|] -> 
-          let mid_mass = 0.5*.(min_mass +. max_mass) in 
-          let min_min = max !mmin (min_mass -. 1.0) and 
-              min_max = min mid_mass (min_mass +. 1.0) and 
-              max_min = max mid_mass (max_mass -. 1.0) and 
-              max_max = min !mmax (max_mass +. 1.0) in 
-          let amin = max !alphamin (alpha -. 0.1) and 
-              amax = min !alphamax (alpha +. 0.1) in 
-            ~-.((log (min_max -. min_min)) +. 
-                   (log (max_max -. max_min)) +. 
-                   (log (amax -. amin)))
-    | _ -> raise (Invalid_argument "log_jump_prob: bad source state")
+let log_jump_tilt_prob (source : float array) target = 
+  match source,target with 
+    | ([|smmin; smmax; sal|],
+       [|tmmin; tmmax; tal|]) -> 
+      if smmin = tmmin && smmax = tmmax && sal <> tal then 
+        0.0 (* Symmetric *)
+      else
+        neg_infinity (* Couldn't have come from the tilt jump proposal. *)
+    | _ -> raise (Invalid_argument "log_jump_tilt_prob: bad states")
+
+let max_shift_distances min_mass max_mass = 
+  (min_mass -. !mmin,
+   !mmax -. max_mass)
+
+let jump_shift = function 
+  | [|min_mass; max_mass; alpha|] -> 
+    let (lshiftmax, rshiftmax) = max_shift_distances min_mass max_mass in 
+    let dm = Stats.draw_uniform (~-.(min 1.0 lshiftmax)) (min 1.0 rshiftmax) in 
+      [|min_mass +. dm; max_mass +. dm; alpha|]
+  | _ -> raise (Invalid_argument "jump_shift: bad state")
+
+let log_jump_shift_prob (source : float array) target = 
+  match source, target with 
+    | ([|smmin; smmax; sal|],
+       [|tmmin; tmmax; tal|]) -> 
+      let (lshiftmax, rshiftmax) = max_shift_distances smmin smmax in 
+      let shiftlow = ~-.(min 1.0 lshiftmax) and 
+          shifthigh = min 1.0 rshiftmax in 
+      let minshift = tmmin -. smmin and 
+          maxshift = tmmax -. smmax in 
+        if sal = tal && abs_float (minshift -. maxshift) < 1e-8 && 
+          shiftlow <= minshift && minshift <= shifthigh then 
+          ~-.(log (shifthigh -. shiftlow))
+        else
+          neg_infinity
+    | _ -> raise (Invalid_argument "log_jump_shift_prob: bad states")
+
+let max_stretch_shrink min_mass max_mass = 
+  (min (min_mass -. !mmin) (!mmax -. max_mass),
+   0.5*.(max_mass -. min_mass))
+
+let jump_stretch = function 
+  | [|min_mass; max_mass; alpha|] -> 
+    let (maxstretch, maxshrink) = max_stretch_shrink min_mass max_mass in 
+    let stretch = min 1.0 maxstretch and 
+        shrink = max 1.0 maxshrink in 
+    let dm = Stats.draw_uniform (~-.stretch) shrink in 
+      [|min_mass +. dm;
+        max_mass -. dm;
+        alpha|]
+  | _ -> raise (Invalid_argument "jump_stretch: bad state")
+
+let log_jump_stretch_prob (source : float array) target = 
+  match source,target with 
+    | ([|smmin; smmax; sal|], 
+       [|tmmin; tmmax; tal|]) -> 
+      let (maxstretch, maxshrink) = max_stretch_shrink smmin smmax in 
+      let stretch = min 1.0 maxstretch and 
+          shrink = min 1.0 maxshrink in 
+        if sal = tal && abs_float ((smmin+.smmax) -. (tmmin+.tmmax)) < 1e-8 && 
+          (~-.stretch) <= tmmin -. smmin && tmmin -. smmin <= shrink then 
+          ~-.(log (stretch +. shrink))
+        else
+          neg_infinity
+    | _ -> raise (Invalid_argument "log_jump_stretch_prob: bad states")
+
+let (jump_proposal, log_jump_probability) = 
+  Mcmc.combine_jump_proposals
+    [(1.0, jump_tilt, log_jump_tilt_prob);
+     (1.0, jump_shift, log_jump_shift_prob);
+     (1.0, jump_stretch, log_jump_stretch_prob)]
 
 let _ = 
   Randomize.randomize ();
