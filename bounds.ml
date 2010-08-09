@@ -12,6 +12,8 @@ type dist =
 let which_dist = ref None
 let filename = ref ""
 let outfile = ref ""
+let low_quantile = ref 0.01
+let high_quantile = ref 0.99
 
 let options = 
   [("-histogram", Arg.String (fun s -> which_dist := Histogram; filename := s),
@@ -26,10 +28,24 @@ let options =
     "use the two-gaussian mcmc output in the given file");
    ("-log-normal", Arg.String (fun s -> which_dist := Log_normal; filename := s),
     "use the log-normal mcmc output in the given file");
-   ("-o", Arg.Set_string outfile, "output filename")]
+   ("-o", Arg.Set_string outfile, "output filename") (* ; *)
+   (* ("-low-quantile", Arg.Set_float low_quantile,  *)
+   (*  Printf.sprintf "quantile of the minimum bound (default %g)" !low_quantile); *)
+   (* ("-high-quantile", Arg.Set_float high_quantile, *)
+   (*  Printf.sprintf "quantile of the maximum bound (default %g)" !high_quantile) *)]
 
 let hist_bounds (bins : float array) = 
-  [|bins.(0); bins.(Array.length bins - 1)|]
+  let nbins = Array.length bins - 1 in 
+  let nbinsf = float_of_int nbins in 
+  let bin_weight = 1.0 /. nbinsf in 
+  let ilow = int_of_float (!low_quantile /. bin_weight) and 
+      ihigh = int_of_float (!high_quantile /. bin_weight) in 
+  let low_width = bins.(ilow+1) -. bins.(ilow) and 
+      high_width = bins.(ihigh+1) -. bins.(ihigh) in 
+  let low_extra = mod_float !low_quantile bin_weight and 
+      high_extra = mod_float !high_quantile bin_weight in 
+    [|bins.(ilow) +. (low_extra /. bin_weight)*.low_width;
+      bins.(ihigh) +. (high_extra /. bin_weight)*.high_width|]
 
 let gaussian_bounds = function 
   | [|mu; sigma|] -> 
@@ -39,12 +55,16 @@ let gaussian_bounds = function
 
 let exponential_bounds = function 
   | [|mmin; msc|] -> 
-    [|mmin; mmin +. msc*.(log 100.0)|]
+    [|mmin +. msc*.(log (100.0/.99.0));
+      mmin +. msc*.(log 100.0)|]
   | _ -> raise (Invalid_argument "exponential_bounds: bad state")
 
 let power_law_bounds = function 
   | [|mmin; mmax; alpha|] -> 
-    [|mmin; mmax|]
+    let ap1 = alpha +. 1.0 in 
+    let rap1 = 1.0 /. ap1 in 
+      [|((mmax**ap1 +. 99.0*.mmin**ap1)/.100.0)**rap1;
+        ((99.0*.mmax**ap1 +. mmin**ap1)/.100.0)**rap1|]
   | _ -> raise (Invalid_argument "power_law_bounds: bad state")
 
 let solve f x0 = 
