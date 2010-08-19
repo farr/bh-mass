@@ -28,6 +28,9 @@ let _ =
   filenames := List.rev !filenames;
   let (mu, sigma) = probs_and_stddev !filenames in
   let nmodels = Array.length mu in
+  let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log Normal";
+              "Histogram 1"; "Histogram 2"; "Histogram 3"; "Histogram 4"; 
+              "Histogram 5"|] in 
     for i = 0 to nmodels - 1 do 
-      Printf.printf "%g %g\n" mu.(i) sigma.(i)
+      Printf.printf "%g %g %% %s\n" mu.(i) sigma.(i) names.(i)
     done
