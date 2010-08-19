@@ -9,7 +9,7 @@ module Tg = Two_gaussian_base
 let outfile = ref "reversible-jump.dat"
 let sampfile = ref ""
 let should_samp = ref false
-let ninterp = ref 100000
+let ninterpskip = ref 1
 
 let options = 
   Arg.align 
@@ -17,8 +17,9 @@ let options =
                    Printf.sprintf "output file (default %s)" !outfile);
                   ("-sampfile", Arg.String (fun s -> should_samp := true; sampfile := s),
                    "output mcmc samples to file");
-                  ("-ninterp", Arg.Set_int ninterp,
-                   Printf.sprintf "nsamp number of interpolating samples to use (default %d)" !ninterp)])
+                  ("-ninterpskip", Arg.Set_int ninterpskip,
+                   Printf.sprintf "nsamp record a sample for interpolation every nsamp samples in the input (default %d)" 
+                     !ninterpskip)])
 
 module Interp = Interpolate_pdf.Make(struct
   type point = float array
@@ -68,26 +69,18 @@ let log_prior =
       | Two_gaussian(params) -> Tg.log_prior params +. offset
       | Log_normal(params) -> Logn_base.log_prior params +. offset
 
-let downsample arr ntot = 
-  let n = Array.length arr in 
-  let nskip = n / ntot in 
-  let nnew = if n mod nskip = 0 then n/nskip else n/nskip + 1 in
-  let new_array = Array.make nnew arr.(0) in 
-    for i = 1 to nnew - 1 do 
-      new_array.(i) <- arr.(i*nskip)
-    done;
-    new_array
-
 let interp_from_file file low high = 
   let inp = open_in file in 
   let samples = Read_write.read (fun x -> x) inp in 
     close_in inp;
-    let samples = 
-      if Array.length samples <= !ninterp then 
-        samples 
+    let nsamp = Array.length samples in
+    let rec loop i samps = 
+      if i >= nsamp then 
+        Array.of_list samps
       else
-        downsample samples !ninterp in
-    Interp.make (Array.map (fun {Mcmc.value = x} -> x) samples) low high
+        loop (i + !ninterpskip) (samples.(i) :: samps) in 
+    let samples = loop 0 [] in
+      Interp.make (Array.map (fun {Mcmc.value = x} -> x) samples) low high
 
 let hinterps = 
   let files = [|"histogram-1bin.mcmc"; "histogram-2bin.mcmc";
