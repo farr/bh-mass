@@ -72,6 +72,15 @@ rule () {
         post-file)
             do_post_file $2;
             shift;;
+        bounds)
+            do_bounds $2;
+            shift;;
+        dist)
+            do_dist $2;
+            shift;;
+        evidence)
+            do_harm_ev $2;
+            shift;;
         *) ocamlbuild $1;;
     esac
 }
