@@ -38,9 +38,15 @@ do_mcmc () {
 
 do_post_file () {
     if [ "$1" != "reversible-jump.mcmc" ]; then 
+        echo "Beginning bounds.";
         do_bounds $1;
+        echo "Done with bounds.";
+        echo "Beginning distribution.";
         do_dist $1;
+        echo "Done with distribution.";
+        echo "Beginning harmonic evidence.";
         do_harm_ev $1;
+        echo "Done with harmonic evidence.";
 #        if [ "$1" != "histogram.mcmc" ]; then 
 #            do_direct_ev $1
 #        fi;
