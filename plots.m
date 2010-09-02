@@ -37,25 +37,11 @@ harmEvData=[importdata('power-law.mcmc.ev');
             importdata('histogram-3bin.mcmc.ev');
             importdata('histogram-4bin.mcmc.ev');
             importdata('histogram-5bin.mcmc.ev')];
-dirEvData=[importdata('power-law.mcmc.ev.direct');
-           importdata('exp-cutoff.mcmc.ev.direct');
-           importdata('gaussian.mcmc.ev.direct');
-           importdata('two-gaussian.mcmc.ev.direct');
-           importdata('log-normal.mcmc.ev.direct');
-           importdata('histogram-1bin.mcmc.ev.direct');
-           importdata('histogram-2bin.mcmc.ev.direct');
-           importdata('histogram-3bin.mcmc.ev.direct');
-           importdata('histogram-4bin.mcmc.ev.direct');
-           importdata('histogram-5bin.mcmc.ev.direct')];
-semilogy(xs,dirEvData, 'xk');
-hold on;
 errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
 axis([-0.5 9.5 -inf inf])
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
-ylabel('p(d|M_i)')
-legend('Direct Integration Evidence','Harmonic Mean Evidence')
+ylabel('p(M_i|d)')
 print -deps '../../Paper/plots/evidence.eps'
-hold off
 
 % Reverse Jump Evidence
 curFig = curFig + 1;
