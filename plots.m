@@ -216,7 +216,7 @@ print -deps '../../Paper/plots/high-masses.eps'
 % Power-law Plots
 curFig = curFig + 1;
 figure(curFig);
-data=importdata('power-law.mcmc');
+data=importdata('power_law-long.mcmc');
 subplot(2,2,1);
 normalizedHist(data(:,1),200);
 blackHistogram();
@@ -234,17 +234,19 @@ xlabel('\alpha');
 ylabel('dN/d\alpha');
 print -deps '../../Paper/plots/power-law.eps'
 
-% % 2D alpha/Mmin correlations -- no so useful
-% curFig=curFig+1;
-% figure(curFig);
-% data=importdata('power-law.mcmc');
-% colormap('Gray');
-% hdata=data(:,[1 3]);
-% hist3d(4:0.05:8, -15:0.5:10, hdata);
-% xlabel('M_{min}');
-% ylabel('\alpha');
-% zlabel('dN/dM_{min}d\alpha');
-% print -deps '../../Paper/plots/power-law-mmin-alpha.eps'
+% Power-law 2D correlations
+curFig=curFig+1;
+figure(curFig);
+data=importdata('power_law-long.mcmc');
+subplot(2,1,1);
+scatter(data(:,1), data(:,3), '.k', 'SizeData', 1);
+xlabel('M_{min}');
+ylabel('\alpha');
+subplot(2,1,2);
+scatter(data(:,2), data(:,3), '.k', 'SizeData', 1);
+xlabel('M_{max}');
+ylabel('\alpha');
+print -deps '../../Paper/plots/power-law-2D.eps'
 
 % Parameteric Mmin plots
 curFig = curFig + 1;
@@ -293,6 +295,34 @@ curFig=curFig+1;
 figure(curFig);
 data=importdata('exp-cutoff.mcmc');
 subplot(2,1,1);
+normalizedHist(data(:,1),250);
+blackHistogram();
+xlabel('M_{min}');
+ylabel('dN/dM_{min}');
+axis([4 8 -inf inf]);
+subplot(2,1,2);
+normalizedHist(data(:,2),500);
+blackHistogram();
+xlabel('M_0');
+ylabel('dN/dM_0');
+axis([0 5 -inf inf]);
+print -deps '../../Paper/plots/exp-cutoff.eps'
+
+% 2D Exponential Plots
+curFig=curFig+1;
+figure(curFig);
+nskip=20;
+data=importdata('exp-cutoff.mcmc');
+scatter(data(1:nskip:end,1), data(1:nskip:end,2), '.k', 'SizeData', 1);
+xlabel('M_{min}');
+ylabel('M_0');
+print -deps '../../Paper/plots/exp-cutoff-2d.eps'
+
+% High-Mass Exponential M_0 plots
+curFig=curFig+1;
+figure(curFig);
+data=importdata('high-mass/exp-cutoff.mcmc');
+subplot(2,1,1);
 normalizedHist(data(:,1),100);
 blackHistogram();
 xlabel('M_{min}');
@@ -302,20 +332,21 @@ normalizedHist(data(:,2),100);
 blackHistogram();
 xlabel('M_0');
 ylabel('dN/dM_0');
-print -deps '../../Paper/plots/exp-cutoff.eps'
+print -deps '../../Paper/plots/exp-cutoff-high.eps'
 
 % Gaussian Mean, Sigma Plots.
 curFig=curFig+1;
 figure(curFig);
 data=importdata('gaussian.mcmc');
-nx=1; ny = 2;
+nx=2; ny = 1;
 subplot(nx,ny,1);
-normalizedHist(data(:,1));
+normalizedHist(data(:,1), 1000);
 blackHistogram();
 xlabel('\mu');
 ylabel('dN/d\mu');
+axis([5 10 -inf inf]);
 subplot(nx,ny,2);
-normalizedHist(data(:,2));
+normalizedHist(data(:,2), 1000);
 blackHistogram();
 xlabel('\sigma');
 ylabel('dN/d\sigma');
@@ -327,15 +358,17 @@ figure(curFig);
 data=importdata('log-normal.mcmc');
 nx=2;ny=1;
 subplot(nx,ny,1);
-normalizedHist(data(:,1),100);
+normalizedHist(data(:,1),1000);
 blackHistogram();
-xlabel('<m>');
-ylabel('dN/d<m>');
+xlabel('<M>');
+ylabel('dN/d<M>');
+axis([4 10 -inf inf]);
 subplot(nx,ny,2);
-normalizedHist(data(:,2),100);
+normalizedHist(data(:,2),1000);
 blackHistogram();
-xlabel('\sigma_m');
-ylabel('dN/d\sigma_m');
+xlabel('\sigma_M');
+ylabel('dN/d\sigma_M');
+axis([0 4 -inf inf]);
 print -deps '../../Paper/plots/log-normal.eps'
 
 % Two Gaussian
@@ -370,3 +403,141 @@ xlabel('\alpha');
 ylabel('dN/d\alpha');
 print -deps '../../Paper/plots/two-gaussian.eps'
 
+% High-mass Reverse Jump Evidence
+curFig = curFig + 1;
+figure(curFig);
+colordef white;
+rjData=importdata('high-mass/reversible-jump.dat');
+xs=0:(length(rjData)-1);
+errorbar(xs, rjData(:,1), rjData(:,1)-rjData(:,2), rjData(:,3)-rjData(:,1),'+k')
+axis([-0.5 9.5 -inf inf]);
+set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
+ylabel('Relative Probability');
+print -deps '../../Paper/plots/rj-high.eps'
+
+% High-mass Parameteric Distributions
+curFig = curFig + 1;
+figure(curFig);
+nx=2;
+ny=3;
+mmin=2;
+mmax=25;
+ymin=0;
+ymax=0.7;
+subplot(nx,ny,1);
+data=importdata('high-mass/power-law.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Power Law')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,2)
+data=importdata('high-mass/exp-cutoff.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Exponential')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,3)
+data=importdata('high-mass/gaussian.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Gaussian')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,4)
+data=importdata('high-mass/two-gaussian.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax])
+title('Two Gaussians')
+xlabel('M')
+ylabel('dN/dM')
+subplot(nx,ny,5)
+data=importdata('high-mass/log-normal.mcmc.dist');
+errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
+axis([mmin mmax ymin ymax]);
+title('Log Normal');
+xlabel('M')
+ylabel('dN/dM')
+print -deps '../../Paper/plots/dist-parameteric-high.eps'
+
+% Non-Parameteric High-mass Distributions
+curFig = curFig + 1;
+figure(curFig);
+nx=2;
+ny=3;
+mmin=2;
+mmax=25;
+ymin=0;
+ymax=0.6;
+subplot(nx,ny,1);
+data=importdata('high-mass/histogram-1bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (1 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,2);
+data=importdata('high-mass/histogram-2bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (2 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,3);
+data=importdata('high-mass/histogram-3bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (3 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,4);
+data=importdata('high-mass/histogram-4bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (4 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+subplot(nx,ny,5);
+data=importdata('high-mass/histogram-5bin.mcmc.dist');
+errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (5 Bin)');
+xlabel('M');
+ylabel('dN/dM');
+print -deps '../../Paper/plots/dist-non-parameteric-high.eps'
+
+% High-mass Harmonic and Direct Evidence.
+curFig=curFig+1;
+figure(curFig);
+colordef white;
+xs = 0:9;
+harmEvData=[importdata('high-mass/power-law.mcmc.ev');
+            importdata('high-mass/exp-cutoff.mcmc.ev');
+            importdata('high-mass/gaussian.mcmc.ev');
+            importdata('high-mass/two-gaussian.mcmc.ev');
+            importdata('high-mass/log-normal.mcmc.ev');
+            importdata('high-mass/histogram-1bin.mcmc.ev');
+            importdata('high-mass/histogram-2bin.mcmc.ev');
+            importdata('high-mass/histogram-3bin.mcmc.ev');
+            importdata('high-mass/histogram-4bin.mcmc.ev');
+            importdata('high-mass/histogram-5bin.mcmc.ev')];
+dirEvData=[importdata('high-mass/power-law.mcmc.ev.direct');
+           importdata('high-mass/exp-cutoff.mcmc.ev.direct');
+           importdata('high-mass/gaussian.mcmc.ev.direct');
+           importdata('high-mass/two-gaussian.mcmc.ev.direct');
+           importdata('high-mass/log-normal.mcmc.ev.direct');
+           importdata('high-mass/histogram-1bin.mcmc.ev.direct');
+           importdata('high-mass/histogram-2bin.mcmc.ev.direct');
+           importdata('high-mass/histogram-3bin.mcmc.ev.direct');
+           importdata('high-mass/histogram-4bin.mcmc.ev.direct');
+           importdata('high-mass/histogram-5bin.mcmc.ev.direct')];
+semilogy(xs,dirEvData, 'xk');
+hold on;
+errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
+axis([-0.5 9.5 -inf inf])
+set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
+ylabel('p(d|M_i)')
+legend('Direct Integration Evidence','Harmonic Mean Evidence')
+print -deps '../../Paper/plots/evidence-high.eps'
+hold off
