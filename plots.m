@@ -37,7 +37,8 @@ harmEvData=[importdata('power-law.mcmc.ev');
             importdata('histogram-3bin.mcmc.ev');
             importdata('histogram-4bin.mcmc.ev');
             importdata('histogram-5bin.mcmc.ev')];
-errorbar(xs, harmEvData(:,1), harmEvData(:,1)-harmEvData(:,2), harmEvData(:,3)-harmEvData(:,1), '+k')
+normalization=sum(harmEvData(:,1));
+errorbar(xs, harmEvData(:,1)/normalization, (harmEvData(:,1)-harmEvData(:,2))/normalization, (harmEvData(:,3)-harmEvData(:,1))/normalization, '+k')
 axis([-0.5 9.5 -inf inf])
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
 ylabel('p(M_i|d)')
