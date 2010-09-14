@@ -2,7 +2,7 @@
 
 set -e
 
-prefix=.
+prefix=$HOME/Documents/Research/BHMass/code
 
 choose_mcmc_arg () {
     case $1 in 
