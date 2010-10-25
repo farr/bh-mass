@@ -1,6 +1,6 @@
 open Dist_base
 
-let alpha_min = ref (-5.0)
+let alpha_min = ref (-20.0)
 let alpha_max = ref 20.0
 
 let gaussian x = 
