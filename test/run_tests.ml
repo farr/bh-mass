@@ -1,7 +1,8 @@
 open OUnit
 
 let tests = "all tests" >:::
-  ["stats.ml tests" >: Stats_test.tests]
+  ["skew_gaussian_base.ml tests" >: Skew_gaussian_base_test.tests;
+   "stats.ml tests" >: Stats_test.tests]
 
 let _ = 
   let results = run_test_tt_main tests in 
