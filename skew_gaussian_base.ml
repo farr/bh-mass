@@ -51,7 +51,7 @@ let log_prior = function
     if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
       mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin && 
       !alpha_min <= alpha && alpha <= !alpha_max then 
-      2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
+      2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin)) -. (log (!alpha_max -. !alpha_min))
     else
       neg_infinity
   | _ -> raise (Failure "log_prior: bad state")
