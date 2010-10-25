@@ -50,7 +50,8 @@ let log_likelihood samples =
       plog = Pl.log_likelihood samples and 
       elog = Ec.log_likelihood samples and 
       tglog = Tg.log_likelihood samples and 
-      lnlog x = Logn_base.log_likelihood samples x in
+      lnlog x = Logn_base.log_likelihood samples x and
+      sglog x = Skew_gaussian_base.log_likelihood samples x in
     function 
       | Histogram(bins) -> hlog bins
       | Gaussian(params) -> glog params
@@ -58,9 +59,10 @@ let log_likelihood samples =
       | Exp_cutoff(params) -> elog params
       | Two_gaussian(params) -> tglog params
       | Log_normal(params) -> lnlog params
+      | Skew_gaussian(params) -> sglog params
 
 let log_prior =
-  let offset = -2.3025850929940456840 in (* offset = log(1/10) because 10 models, each equally likely. *)
+  let offset = -2.3978952727983705441 in (* offset = log(1/11) because 11 models, each equally likely. *)
     function 
       | Histogram(params) -> H.log_prior params +. offset
       | Gaussian(params) -> G.log_prior params +. offset
@@ -68,6 +70,7 @@ let log_prior =
       | Exp_cutoff(params) -> Ec.log_prior params +. offset
       | Two_gaussian(params) -> Tg.log_prior params +. offset
       | Log_normal(params) -> Logn_base.log_prior params +. offset
+      | Skew_gaussian(params) -> Skew_gaussian_base.log_prior params +. offset
 
 let interp_from_file file low high = 
   let inp = open_in file in 
@@ -107,6 +110,11 @@ let lninterp =
     (Logn_base.low_bounds ())
     (Logn_base.high_bounds ())
 
+let sginterp = 
+  interp_from_file "skew-gaussian.mcmc"
+    [|!mmin; 0.0; !Skew_gaussian_base.alpha_min|]
+    [|!mmax; (!mmax -. !mmin); !Skew_gaussian_base.alpha_max|]
+
 let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp; lninterp|]
 
 let interp_of_state = function 
@@ -117,10 +125,11 @@ let interp_of_state = function
   | Exp_cutoff(_) -> einterp
   | Two_gaussian(_) -> tginterp
   | Log_normal(_) -> lninterp
+  | Skew_gaussian(_) -> sginterp
 
 let array_of_state = function 
   | Histogram(state) | Gaussian(state) | Power_law(state) 
-  | Exp_cutoff(state) | Two_gaussian(state) | Log_normal(state) -> 
+  | Exp_cutoff(state) | Two_gaussian(state) | Log_normal(state) | Skew_gaussian(state) -> 
     state
 
 let _ = Printf.eprintf "Done with interpolations.\n%!"
@@ -132,34 +141,9 @@ let constr =
       (fun x -> Power_law x);
       (fun x -> Exp_cutoff x);
       (fun x -> Two_gaussian x);
-      (fun x -> Log_normal x)|]
+      (fun x -> Log_normal x);
+      (fun x -> Skew_gaussian x)|]
 
-let write_state_to_array = function 
-  | Histogram(state) -> 
-    let n = Array.length state - 2 in 
-      Array.append [|float_of_int n|] state
-  | Gaussian(state) -> 
-    Array.append [|5.0|] state
-  | Power_law(state) -> 
-    Array.append [|6.0|] state
-  | Exp_cutoff(state) -> 
-    Array.append [|7.0|] state
-  | Two_gaussian(state) -> 
-    Array.append [|8.0|] state
-  | Log_normal(state) -> 
-    Array.append [|9.0|] state
-
-let read_state_from_array arr = 
-  let n = Array.length arr in
-    match arr.(0) with 
-      | 0.0 | 1.0 | 2.0 | 3.0 | 4.0 -> Histogram(Array.sub arr 1 (n-1))
-      | 5.0 -> Gaussian(Array.sub arr 1 (n-1))
-      | 6.0 -> Power_law(Array.sub arr 1 (n-1))
-      | 7.0 -> Exp_cutoff(Array.sub arr 1 (n-1))
-      | 8.0 -> Two_gaussian(Array.sub arr 1 (n-1))
-      | 9.0 -> Log_normal(Array.sub arr 1 (n-1))
-      | _ -> raise (Invalid_argument "read_state_from_array: bad state")
-                                                   
 let compare_float (x : float) y = Pervasives.compare x y
 
 (* The fixup functions below deal with the fact that the interpolating
@@ -214,7 +198,7 @@ let jump_proposal _ =
     else
       constr.(i) state
 
-(* Leave off the 1/9 factor for each model being equally likely.  *)
+(* Leave off the 1/11 factor for each model being equally likely.  *)
 let log_jump_prob _ = function 
   | Histogram(state) -> 
     let interp = interps.(Array.length state - 2) in 
@@ -236,6 +220,9 @@ let log_jump_prob _ = function
   | Log_normal(state) -> 
     let interp = interps.(9) in 
       log (Interp.jump_prob interp () state)
+  | Skew_gaussian(state) -> 
+    let interp = interps.(10) in 
+      log (Interp.jump_prob interp () state)
 
 let accumulate_into_counter counters = function 
   | Power_law(_) -> 
@@ -248,11 +235,13 @@ let accumulate_into_counter counters = function
     counters.(3) <- counters.(3) + 1
   | Log_normal(_) -> 
     counters.(4) <- counters.(4) + 1
+  | Skew_gaussian(_) -> 
+    counters.(5) <- counters.(5) + 1
   | Histogram(bins) -> 
-    let n = Array.length bins + 3 in 
+    let n = Array.length bins + 4 in 
       counters.(n) <- counters.(n) + 1
 
-let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log Normal";
+let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log Normal"; "Skew Gaussian";
               "Histogram 1"; "Histogram 2"; "Histogram 3"; "Histogram 4"; 
               "Histogram 5"|]
 
@@ -285,7 +274,7 @@ let _ =
         current := next !current
       done;
       (match maybe_out with 
-        | Some(out) -> Read_write.write_sample write_state_to_array out !current
+        | Some(out) -> Read_write.write_sample state_to_array out !current
         | None -> ());
       accumulate_into_counter counts (!current).Mcmc.value
     done;

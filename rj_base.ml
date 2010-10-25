@@ -5,6 +5,7 @@ type state =
   | Two_gaussian of float array
   | Exp_cutoff of float array
   | Log_normal of float array
+  | Skew_gaussian of float array
 
 let state_to_array = function 
   | Histogram(x) -> Array.append [|0.0|] x
@@ -13,6 +14,7 @@ let state_to_array = function
   | Two_gaussian(x) -> Array.append [|3.0|] x
   | Exp_cutoff(x) -> Array.append [|4.0|] x
   | Log_normal(x) -> Array.append [|5.0|] x
+  | Skew_gaussian(x) -> Array.append [|6.0|] x
 
 let array_to_state x = 
   let n = Array.length x in
@@ -24,4 +26,5 @@ let array_to_state x =
     | 3.0 -> Two_gaussian pt
     | 4.0 -> Exp_cutoff pt
     | 5.0 -> Log_normal pt
+    | 6.0 -> Skew_gaussian pt
     | _ -> raise (Failure "array_to_state: bad first 'coordinate'")
