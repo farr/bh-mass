@@ -74,15 +74,19 @@ let log_prior =
 
 let interp_from_file file low high = 
   let inp = open_in file in 
-  let samples = Read_write.read (fun x -> x) inp in 
+  let samples = ref [] in 
+    (try 
+       while true do 
+         for i = 1 to !ninterpskip - 1 do 
+           ignore(Read_write.read_sample (fun x -> x) inp)
+         done;
+         samples := (Read_write.read_sample (fun x -> x) inp) :: !samples;
+       done;
+       ()
+     with 
+       | End_of_file -> ());
     close_in inp;
-    let nsamp = Array.length samples in
-    let rec loop i samps = 
-      if i >= nsamp then 
-        Array.of_list samps
-      else
-        loop (i + !ninterpskip) (samples.(i) :: samps) in 
-    let samples = loop 0 [] in
+    let samples = Array.of_list !samples in 
       Interp.make (Array.map (fun {Mcmc.value = x} -> x) samples) low high
 
 let hinterps = 
