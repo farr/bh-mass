@@ -432,19 +432,14 @@ print -deps '../../Paper/plots/gaussian-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('log-normal.mcmc');
-nx=2;ny=1;
-subplot(nx,ny,1);
-normalizedHist(data(:,1),1000);
-blackHistogram();
-xlabel('<M> (Solar Mass)');
-ylabel('dN/d<M>');
-axis([4 10 -inf inf]);
-subplot(nx,ny,2);
-normalizedHist(data(:,2),1000);
-blackHistogram();
-xlabel('\sigma_M (Solar Mass)');
-ylabel('dN/d\sigma_M');
-axis([0 4 -inf inf]);
+normalizedHist(data(:,2), 100);
+set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'});
+hold on
+normalizedHist(data(:,1),100);
+hold off
+set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
+xlabel('<M>, \sigma_M (Solar Mass)');
+axis([0 10 -inf inf]);
 print -deps '../../Paper/plots/log-normal.eps'
 
 % Log Normal (high-mass)
@@ -470,32 +465,29 @@ print -deps '../../Paper/plots/log-normal-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('two-gaussian.mcmc');
-nx=3;ny=2;
+nx=3;ny=1;
 subplot(nx,ny,1);
+normalizedHist(data(:,3),50);
+set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'});
+hold on
 normalizedHist(data(:,1),100);
-blackHistogram();
-xlabel('\mu_1 (Solar Mass)');
-ylabel('dN/d\mu_1');
+hold off
+axis([0 10 -inf inf])
+xlabel('\mu_1, \sigma_1 (Solar Mass)');
+set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'})
 subplot(nx,ny,2);
-normalizedHist(data(:,3),100);
-blackHistogram();
-xlabel('\sigma_1 (Solar Mass)');
-ylabel('dN/d\sigma_1');
-subplot(nx,ny,3);
+normalizedHist(data(:,4),50);
+set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'})
+hold on
 normalizedHist(data(:,2),100);
-blackHistogram();
-xlabel('\mu_2 (Solar Mass)');
-ylabel('dN/d\mu_2');
-subplot(nx,ny,4);
-normalizedHist(data(:,4),100);
-blackHistogram();
-xlabel('\sigma_2 (Solar Mass)');
-ylabel('dN/d\sigma_2');
-subplot(nx,ny,[5 6]);
+hold off
+axis([0 15 -inf inf]);
+xlabel('\mu_2, \sigma_2 (Solar Mass)');
+set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'})
+subplot(nx,ny,3);
 normalizedHist(data(:,5),100);
-blackHistogram();
+set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
 xlabel('\alpha');
-ylabel('dN/d\alpha');
 print -deps '../../Paper/plots/two-gaussian.eps'
 
 % Two Gaussian (high-mass)
