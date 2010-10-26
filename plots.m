@@ -1,70 +1,4 @@
 curFig=1;
-% % Mass histogram.
-% figure(curFig);
-% colordef white;
-% massData=importdata('masses.dat');
-% normalizedHist(massData, 1000);
-% blackHistogram();
-% axis([0 30 0 inf])
-% xlabel('M')
-% ylabel('dN/dM')
-% print -deps '../../Paper/plots/masses.eps'
-
-% % High masses
-% curFig=curFig+1;
-% figure(curFig);
-% colordef white;
-% massData=importdata('high-mass/masses.dat');
-% normalizedHist(massData, 1000);
-% blackHistogram();
-% axis([0 40 -inf inf]);
-% xlabel('M');
-% ylabel('dN/dM');
-% print -deps '../../Paper/plots/masses-high.eps'
-
-% % Harmonic and Direct Evidence.
-% curFig=curFig+1;
-% figure(curFig);
-% colordef white;
-% xs = 0:9;
-% harmEvData=[importdata('power-law.mcmc.ev');
-%             importdata('exp-cutoff.mcmc.ev');
-%             importdata('gaussian.mcmc.ev');
-%             importdata('two-gaussian.mcmc.ev');
-%             importdata('log-normal.mcmc.ev');
-%             importdata('histogram-1bin.mcmc.ev');
-%             importdata('histogram-2bin.mcmc.ev');
-%             importdata('histogram-3bin.mcmc.ev');
-%             importdata('histogram-4bin.mcmc.ev');
-%             importdata('histogram-5bin.mcmc.ev')];
-% normalization=sum(harmEvData(:,1));
-% errorbar(xs, harmEvData(:,1)/normalization, (harmEvData(:,1)-harmEvData(:,2))/normalization, (harmEvData(:,3)-harmEvData(:,1))/normalization, '+k')
-% axis([-0.5 9.5 -inf inf])
-% set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
-% ylabel('p(M_i|d)')
-% print -deps '../../Paper/plots/evidence.eps'
-
-% % Harmonic and Direct Evidence.
-% curFig=curFig+1;
-% figure(curFig);
-% colordef white;
-% xs = 0:9;
-% harmEvData=[importdata('high-mass/power-law.mcmc.ev');
-%             importdata('high-mass/exp-cutoff.mcmc.ev');
-%             importdata('high-mass/gaussian.mcmc.ev');
-%             importdata('high-mass/two-gaussian.mcmc.ev');
-%             importdata('high-mass/log-normal.mcmc.ev');
-%             importdata('high-mass/histogram-1bin.mcmc.ev');
-%             importdata('high-mass/histogram-2bin.mcmc.ev');
-%             importdata('high-mass/histogram-3bin.mcmc.ev');
-%             importdata('high-mass/histogram-4bin.mcmc.ev');
-%             importdata('high-mass/histogram-5bin.mcmc.ev')];
-% normalization=sum(harmEvData(:,1));
-% errorbar(xs, harmEvData(:,1)/normalization, (harmEvData(:,1)-harmEvData(:,2))/normalization, (harmEvData(:,3)-harmEvData(:,1))/normalization, '+k')
-% axis([-0.5 9.5 -inf inf])
-% set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
-% ylabel('p(M_i|d)')
-% print -deps '../../Paper/plots/evidence-high.eps'
 
 % Reverse Jump Evidence
 curFig = curFig + 1;
@@ -78,189 +12,160 @@ set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'
 ylabel('Relative Evidence');
 print -deps '../../Paper/plots/rj.eps'
 
-% parametric Distributions
+% Distributions
 curFig = curFig + 1;
 figure(curFig);
-nx=2;
+nx=4;
 ny=3;
 mmin=2;
 mmax=15;
-ymin=0;
-ymax=0.7;
+ymin=-inf;
+ymax=inf;
 subplot(nx,ny,1);
 data=importdata('power-law.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Power Law')
-xlabel('M')
-ylabel('dN/dM')
+%xlabel('M (Solar Mass)')
+set(gca, 'ytick', []);
 subplot(nx,ny,2)
 data=importdata('exp-cutoff.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Exponential')
-xlabel('M')
-ylabel('dN/dM')
+%xlabel('M (Solar Mass)')
+set(gca, 'ytick', []);
 subplot(nx,ny,3)
 data=importdata('gaussian.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Gaussian')
-xlabel('M')
-ylabel('dN/dM')
+%xlabel('M (Solar Mass)')
+set(gca, 'ytick', []);
 subplot(nx,ny,4)
 data=importdata('two-gaussian.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Two Gaussians')
-xlabel('M')
-ylabel('dN/dM')
+%xlabel('M (Solar Mass)')
+set(gca, 'ytick', []);
 subplot(nx,ny,5)
 data=importdata('log-normal.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Log Normal');
-xlabel('M')
-ylabel('dN/dM')
-print -deps '../../Paper/plots/dist-parametric.eps'
+%xlabel('M (Solar Mass)')
+set(gca, 'ytick', []);
+subplot(nx,ny,6);
+data=importdata('histogram-1bin.mcmc.dist');
+plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (1 Bin)');
+%xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+subplot(nx,ny,7);
+data=importdata('histogram-2bin.mcmc.dist');
+plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (2 Bin)');
+%xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+subplot(nx,ny,8);
+data=importdata('histogram-3bin.mcmc.dist');
+plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (3 Bin)');
+xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+subplot(nx,ny,9);
+data=importdata('histogram-4bin.mcmc.dist');
+plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (4 Bin)');
+xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+subplot(nx,ny,10);
+data=importdata('histogram-5bin.mcmc.dist');
+plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
+axis([mmin mmax ymin ymax]);
+title('Histogram (5 Bin)');
+xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+print -deps '../../Paper/plots/dist.eps'
 
-% parametric Distributions High-mass
+% High-mass Distributions
 curFig = curFig + 1;
 figure(curFig);
-nx=2;
+nx=4;
 ny=3;
 mmin=2;
 mmax=30;
-ymin=0;
-ymax=0.4;
+ymin=-inf;
+ymax=inf;
 subplot(nx,ny,1);
 data=importdata('high-mass/power-law.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Power Law')
-xlabel('M')
-ylabel('dN/dM')
+set(gca, 'ytick', []);
 subplot(nx,ny,2)
 data=importdata('high-mass/exp-cutoff.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Exponential')
-xlabel('M')
-ylabel('dN/dM')
+set(gca, 'ytick', []);
 subplot(nx,ny,3)
 data=importdata('high-mass/gaussian.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Gaussian')
-xlabel('M')
-ylabel('dN/dM')
+set(gca, 'ytick', []);
 subplot(nx,ny,4)
 data=importdata('high-mass/two-gaussian.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax])
 title('Two Gaussians')
-xlabel('M')
-ylabel('dN/dM')
+set(gca, 'ytick', []);
 subplot(nx,ny,5)
 data=importdata('high-mass/log-normal.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Log Normal');
-xlabel('M')
-ylabel('dN/dM')
-print -deps '../../Paper/plots/dist-parametric-high.eps'
-
-% Non-parametric Distributions
-curFig = curFig + 1;
-figure(curFig);
-nx=2;
-ny=3;
-mmin=2;
-mmax=15;
-ymin=0;
-ymax=0.6;
-subplot(nx,ny,1);
-data=importdata('histogram-1bin.mcmc.dist');
-plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
-axis([mmin mmax ymin ymax]);
-title('Histogram (1 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,2);
-data=importdata('histogram-2bin.mcmc.dist');
-plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
-axis([mmin mmax ymin ymax]);
-title('Histogram (2 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,3);
-data=importdata('histogram-3bin.mcmc.dist');
-plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
-axis([mmin mmax ymin ymax]);
-title('Histogram (3 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,4);
-data=importdata('histogram-4bin.mcmc.dist');
-plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
-axis([mmin mmax ymin ymax]);
-title('Histogram (4 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,5);
-data=importdata('histogram-5bin.mcmc.dist');
-plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
-axis([mmin mmax ymin ymax]);
-title('Histogram (5 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-print -deps '../../Paper/plots/dist-non-parametric.eps'
-
-% Non-parametric Distributions for high-mass.
-curFig = curFig + 1;
-figure(curFig);
-nx=2;
-ny=3;
-mmin=2;
-mmax=30;
-ymin=0;
-ymax=0.4;
-subplot(nx,ny,1);
+set(gca, 'ytick', []);
+subplot(nx,ny,6);
 data=importdata('high-mass/histogram-1bin.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Histogram (1 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,2);
+set(gca, 'ytick', []);
+subplot(nx,ny,7);
 data=importdata('high-mass/histogram-2bin.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Histogram (2 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,3);
+set(gca, 'ytick', []);
+subplot(nx,ny,8);
 data=importdata('high-mass/histogram-3bin.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Histogram (3 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,4);
+xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+subplot(nx,ny,9);
 data=importdata('high-mass/histogram-4bin.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Histogram (4 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-subplot(nx,ny,5);
+xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+subplot(nx,ny,10);
 data=importdata('high-mass/histogram-5bin.mcmc.dist');
 plot(data(:,1),data(:,2),'-k', data(:,1), data(:,3), '--k', data(:,1), data(:,4), '--k');
 axis([mmin mmax ymin ymax]);
 title('Histogram (5 Bin)');
-xlabel('M');
-ylabel('dN/dM');
-print -deps '../../Paper/plots/dist-non-parametric-high-mass.eps'
+xlabel('M (Solar Mass)');
+set(gca, 'ytick', []);
+print -deps '../../Paper/plots/dist-high.eps'
 
 % Mass Plots
 curFig = curFig + 1;
@@ -286,9 +191,12 @@ for i = 1:length(filenames)
     normalizedHist(data);
     blackHistogram();   
     axis([0 30 -inf inf]);
-    xlabel('M')
-    ylabel('dN/dM')
-    title(names{i})
+    if i > 12
+        xlabel('M (Solar Mass)')
+    end
+%    ylabel('dN/dM')
+    set(gca, 'ytick', []);
+    title(names{i});
 end
 print -deps '../../Paper/plots/all-masses.eps'
 
@@ -308,9 +216,12 @@ for i = 1:length(filenames)
     normalizedHist(data);
     blackHistogram();
     axis([0 80 -inf inf]);
-    xlabel('M');
-    ylabel('dN/dM');
-    title(names{i})
+%    ylabel('dN/dM');
+    if i > 3
+        xlabel('M (Solar Mass)');
+    end
+    set(gca, 'ytick', []);
+    title(names{i});
 end
 print -deps '../../Paper/plots/high-masses.eps'
 
@@ -321,12 +232,12 @@ data=importdata('power-law.mcmc');
 subplot(2,2,1);
 normalizedHist(data(:,1),200);
 blackHistogram();
-xlabel('M_{min}');
+xlabel('M_{min} (Solar Mass)');
 ylabel('dN/dM_{min}');
-subplot(2,2,2);
+subplot(2,2,2)
 normalizedHist(data(:,2),200);
 blackHistogram();
-xlabel('M_{max}');
+xlabel('M_{max} (Solar Mass)');
 ylabel('dN/dM_{max}');
 subplot(2,2,[3 4]);
 normalizedHist(data(:,3),200);
@@ -342,12 +253,12 @@ data=importdata('high-mass/power-law.mcmc');
 subplot(2,2,1);
 normalizedHist(data(:,1),200);
 blackHistogram();
-xlabel('M_{min}');
+xlabel('M_{min} (Solar Mass)');
 ylabel('dN/dM_{min}');
 subplot(2,2,2);
 normalizedHist(data(:,2),200);
 blackHistogram();
-xlabel('M_{max}');
+xlabel('M_{max} (Solar Mass)');
 ylabel('dN/dM_{max}');
 subplot(2,2,[3 4]);
 normalizedHist(data(:,3),200);
@@ -360,24 +271,30 @@ print -deps '../../Paper/plots/power-law-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('power-law.mcmc');
-nskip=40;
+nskip=30;
 subplot(2,1,1);
 scatter(data(1:nskip:end,1), data(1:nskip:end,3), '.k', 'SizeData', 1);
-xlabel('M_{min}');
+xlabel('M_{min} (Solar Mass)');
 ylabel('\alpha');
 subplot(2,1,2);
 scatter(data(1:nskip:end,2), data(1:nskip:end,3), '.k', 'SizeData', 1);
-xlabel('M_{max}');
+xlabel('M_{max} (Solar Mass)');
 ylabel('\alpha');
 print -deps '../../Paper/plots/power-law-2D.eps'
 
-% parametric Mmin plots
+% Parametric Mmin plots
 curFig = curFig + 1;
 figure(curFig);
 files={'power-law.mcmc.bds'; 'exp-cutoff.mcmc.bds'; 
-       'gaussian.mcmc.bds'; 'two-gaussian.mcmc.bds'; 'log-normal.mcmc.bds'};
-names={'Power Law'; 'Exponential'; 'Gaussian'; 'Two Gaussians'; 'Log Normal'};
-nx=2;
+       'gaussian.mcmc.bds'; 'two-gaussian.mcmc.bds'; 'log-normal.mcmc.bds'; 
+       'histogram-1bin.mcmc.bds'; 'histogram-2bin.mcmc.bds';
+       'histogram-3bin.mcmc.bds'; 'histogram-4bin.mcmc.bds';
+       'histogram-5bin.mcmc.bds'};
+names={'Power Law'; 'Exponential'; 'Gaussian'; 'Two Gaussians'; 'Log Normal';
+       'Histogram (1 Bin)'; 'Histogram (2 Bin)';
+       'Histogram (3 Bin)'; 'Histogram (4 Bin)';
+       'Histogram (5 Bin)'};
+nx=4;
 ny=3;
 for i = 1:length(files)
     subplot(nx,ny,i);
@@ -386,40 +303,26 @@ for i = 1:length(files)
     axis([max(0,min(data(:,1))) inf -inf inf]);
     blackHistogram();
     title(names{i});
-    xlabel('M_{min}');
-    ylabel('dN/dM_{min}');
+    set(gca, 'ytick', []);
+    if i > 7
+        xlabel('M_{min} (Solar Mass)');
+    end
 end
-print -deps '../../Paper/plots/mmin-parametric.eps'
+print -deps '../../Paper/plots/mmin.eps'
 
-% Nonparametric Mmin plots
-curFig = curFig + 1;
-nx = 2;
-ny = 3;
-figure(curFig);
-files={'histogram-1bin.mcmc.bds'; 'histogram-2bin.mcmc.bds';
-       'histogram-3bin.mcmc.bds'; 'histogram-4bin.mcmc.bds';
-       'histogram-5bin.mcmc.bds'};
-titles={'Histogram (1 Bin)'; 'Histogram (2 Bin)';
-        'Histogram (3 Bin)'; 'Histogram (4 Bin)';
-        'Histogram (5 Bin)'};
-for i = 1:length(files)
-    subplot(nx,ny,i);
-    data=importdata(files{i});
-    normalizedHist(data(:,1),1000);
-    blackHistogram();
-    title(titles{i});
-    xlabel('M_{min}');
-    ylabel('dN/dM_{min}');
-end
-print -deps '../../Paper/plots/mmin-non-parametric.eps'
-
-% parametric Mmin plots (high-mass)
+% Mmin plots (high-mass)
 curFig = curFig + 1;
 figure(curFig);
 files={'high-mass/power-law.mcmc.bds'; 'high-mass/exp-cutoff.mcmc.bds'; 
-       'high-mass/gaussian.mcmc.bds'; 'high-mass/two-gaussian.mcmc.bds'; 'high-mass/log-normal.mcmc.bds'};
-names={'Power Law'; 'Exponential'; 'Gaussian'; 'Two Gaussians'; 'Log Normal'};
-nx=2;
+       'high-mass/gaussian.mcmc.bds'; 'high-mass/two-gaussian.mcmc.bds'; 'high-mass/log-normal.mcmc.bds';
+       'high-mass/histogram-1bin.mcmc.bds'; 'high-mass/histogram-2bin.mcmc.bds';
+       'high-mass/histogram-3bin.mcmc.bds'; 'high-mass/histogram-4bin.mcmc.bds';
+       'high-mass/histogram-5bin.mcmc.bds'};
+names={'Power Law'; 'Exponential'; 'Gaussian'; 'Two Gaussians'; 'Log Normal';
+       'Histogram (1 Bin)'; 'Histogram (2 Bin)';
+       'Histogram (3 Bin)'; 'Histogram (4 Bin)';
+       'Histogram (5 Bin)'};
+nx=4;
 ny=3;
 for i = 1:length(files)
     subplot(nx,ny,i);
@@ -428,32 +331,12 @@ for i = 1:length(files)
     axis([max(0,min(data(:,1))) inf -inf inf]);
     blackHistogram();
     title(names{i});
-    xlabel('M_{min}');
-    ylabel('dN/dM_{min}');
+    set(gca, 'ytick', []);
+    if i > 7 
+        xlabel('M_{min} (Solar Mass)');
+    end
 end
-print -deps '../../Paper/plots/mmin-parametric-high.eps'
-
-% Nonparametric Mmin plots (high-mass)
-curFig = curFig + 1;
-nx = 2;
-ny = 3;
-figure(curFig);
-files={'high-mass/histogram-1bin.mcmc.bds'; 'high-mass/histogram-2bin.mcmc.bds';
-       'high-mass/histogram-3bin.mcmc.bds'; 'high-mass/histogram-4bin.mcmc.bds';
-       'high-mass/histogram-5bin.mcmc.bds'};
-titles={'Histogram (1 Bin)'; 'Histogram (2 Bin)';
-        'Histogram (3 Bin)'; 'Histogram (4 Bin)';
-        'Histogram (5 Bin)'};
-for i = 1:length(files)
-    subplot(nx,ny,i);
-    data=importdata(files{i});
-    normalizedHist(data(:,1),1000);
-    blackHistogram();
-    title(titles{i});
-    xlabel('M_{min}');
-    ylabel('dN/dM_{min}');
-end
-print -deps '../../Paper/plots/mmin-non-parametric-high.eps'
+print -deps '../../Paper/plots/mmin-high.eps'
 
 % Exponential plots
 curFig=curFig+1;
@@ -462,13 +345,13 @@ data=importdata('exp-cutoff.mcmc');
 subplot(2,1,1);
 normalizedHist(data(:,1),250);
 blackHistogram();
-xlabel('M_{min}');
+xlabel('M_{min} (Solar Mass)');
 ylabel('dN/dM_{min}');
 axis([4 8 -inf inf]);
 subplot(2,1,2);
 normalizedHist(data(:,2),500);
 blackHistogram();
-xlabel('M_0');
+xlabel('M_0 (Solar Mass)');
 ylabel('dN/dM_0');
 axis([0 5 -inf inf]);
 print -deps '../../Paper/plots/exp-cutoff.eps'
@@ -480,7 +363,7 @@ data=importdata('high-mass/exp-cutoff.mcmc');
 subplot(2,1,1);
 normalizedHist(data(:,1),250);
 blackHistogram();
-xlabel('M_{min}');
+xlabel('M_{min} (Solar Mass)');
 ylabel('dN/dM_{min}');
 axis([2 8 -inf inf]);
 subplot(2,1,2);
@@ -494,11 +377,11 @@ print -deps '../../Paper/plots/exp-cutoff-high.eps'
 % 2D Exponential Plots
 curFig=curFig+1;
 figure(curFig);
-nskip=40;
+nskip=30;
 data=importdata('exp-cutoff.mcmc');
 scatter(data(1:nskip:end,1), data(1:nskip:end,2), '.k', 'SizeData', 1);
-xlabel('M_{min}');
-ylabel('M_0');
+xlabel('M_{min} (Solar Mass)');
+ylabel('M_0 (Solar Mass)');
 print -deps '../../Paper/plots/exp-cutoff-2d.eps'
 
 % High-Mass Exponential M_0 plots
@@ -508,12 +391,12 @@ data=importdata('high-mass/exp-cutoff.mcmc');
 subplot(2,1,1);
 normalizedHist(data(:,1),100);
 blackHistogram();
-xlabel('M_{min}');
+xlabel('M_{min} (Solar Mass)');
 ylabel('dN/dM_{min}');
 subplot(2,1,2);
 normalizedHist(data(:,2),100);
 blackHistogram();
-xlabel('M_0');
+xlabel('M_0 (Solar Mass)');
 ylabel('dN/dM_0');
 print -deps '../../Paper/plots/exp-cutoff-high.eps'
 
@@ -525,13 +408,13 @@ nx=2; ny = 1;
 subplot(nx,ny,1);
 normalizedHist(data(:,1), 1000);
 blackHistogram();
-xlabel('\mu');
+xlabel('\mu (Solar Mass)');
 ylabel('dN/d\mu');
 axis([5 10 -inf inf]);
 subplot(nx,ny,2);
 normalizedHist(data(:,2), 1000);
 blackHistogram();
-xlabel('\sigma');
+xlabel('\sigma (Solar Mass)');
 ylabel('dN/d\sigma');
 print -deps '../../Paper/plots/gaussian.eps'
 
@@ -543,13 +426,13 @@ nx=2; ny = 1;
 subplot(nx,ny,1);
 normalizedHist(data(:,1), 1000);
 blackHistogram();
-xlabel('\mu');
+xlabel('\mu (Solar Mass)');
 ylabel('dN/d\mu');
 axis([5 15 -inf inf]);
 subplot(nx,ny,2);
 normalizedHist(data(:,2), 1000);
 blackHistogram();
-xlabel('\sigma');
+xlabel('\sigma (Solar Mass)');
 ylabel('dN/d\sigma');
 print -deps '../../Paper/plots/gaussian-high.eps'
 
@@ -561,13 +444,13 @@ nx=2;ny=1;
 subplot(nx,ny,1);
 normalizedHist(data(:,1),1000);
 blackHistogram();
-xlabel('<M>');
+xlabel('<M> (Solar Mass)');
 ylabel('dN/d<M>');
 axis([4 10 -inf inf]);
 subplot(nx,ny,2);
 normalizedHist(data(:,2),1000);
 blackHistogram();
-xlabel('\sigma_M');
+xlabel('\sigma_M (Solar Mass)');
 ylabel('dN/d\sigma_M');
 axis([0 4 -inf inf]);
 print -deps '../../Paper/plots/log-normal.eps'
@@ -580,13 +463,13 @@ nx=2;ny=1;
 subplot(nx,ny,1);
 normalizedHist(data(:,1),1000);
 blackHistogram();
-xlabel('<M>');
+xlabel('<M> (Solar Mass)');
 ylabel('dN/d<M>');
 axis([4 15 -inf inf]);
 subplot(nx,ny,2);
 normalizedHist(data(:,2),1000);
 blackHistogram();
-xlabel('\sigma_M');
+xlabel('\sigma_M (Solar Mass)');
 ylabel('dN/d\sigma_M');
 axis([0 8 -inf inf]);
 print -deps '../../Paper/plots/log-normal-high.eps'
@@ -599,22 +482,22 @@ nx=3;ny=2;
 subplot(nx,ny,1);
 normalizedHist(data(:,1),100);
 blackHistogram();
-xlabel('\mu_1');
+xlabel('\mu_1 (Solar Mass)');
 ylabel('dN/d\mu_1');
 subplot(nx,ny,2);
 normalizedHist(data(:,3),100);
 blackHistogram();
-xlabel('\sigma_1');
+xlabel('\sigma_1 (Solar Mass)');
 ylabel('dN/d\sigma_1');
 subplot(nx,ny,3);
 normalizedHist(data(:,2),100);
 blackHistogram();
-xlabel('\mu_2');
+xlabel('\mu_2 (Solar Mass)');
 ylabel('dN/d\mu_2');
 subplot(nx,ny,4);
 normalizedHist(data(:,4),100);
 blackHistogram();
-xlabel('\sigma_2');
+xlabel('\sigma_2 (Solar Mass)');
 ylabel('dN/d\sigma_2');
 subplot(nx,ny,[5 6]);
 normalizedHist(data(:,5),100);
@@ -631,22 +514,22 @@ nx=3;ny=2;
 subplot(nx,ny,1);
 normalizedHist(data(:,1),100);
 blackHistogram();
-xlabel('\mu_1');
+xlabel('\mu_1 (Solar Mass)');
 ylabel('dN/d\mu_1');
 subplot(nx,ny,2);
 normalizedHist(data(:,3),100);
 blackHistogram();
-xlabel('\sigma_1');
+xlabel('\sigma_1 (Solar Mass)');
 ylabel('dN/d\sigma_1');
 subplot(nx,ny,3);
 normalizedHist(data(:,2),100);
 blackHistogram();
-xlabel('\mu_2');
+xlabel('\mu_2 (Solar Mass)');
 ylabel('dN/d\mu_2');
 subplot(nx,ny,4);
 normalizedHist(data(:,4),100);
 blackHistogram();
-xlabel('\sigma_2');
+xlabel('\sigma_2 (Solar Mass)');
 ylabel('dN/d\sigma_2');
 subplot(nx,ny,[5 6]);
 normalizedHist(data(:,5),100);
@@ -666,95 +549,3 @@ axis([-0.5 9.5 -inf inf]);
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
 ylabel('Relative Probability');
 print -deps '../../Paper/plots/rj-high.eps'
-
-% % High-mass parametric Distributions
-% curFig = curFig + 1;
-% figure(curFig);
-% nx=2;
-% ny=3;
-% mmin=2;
-% mmax=25;
-% ymin=0;
-% ymax=0.7;
-% subplot(nx,ny,1);
-% data=importdata('high-mass/power-law.mcmc.dist');
-% errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
-% axis([mmin mmax ymin ymax])
-% title('Power Law')
-% xlabel('M')
-% ylabel('dN/dM')
-% subplot(nx,ny,2)
-% data=importdata('high-mass/exp-cutoff.mcmc.dist');
-% errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
-% axis([mmin mmax ymin ymax])
-% title('Exponential')
-% xlabel('M')
-% ylabel('dN/dM')
-% subplot(nx,ny,3)
-% data=importdata('high-mass/gaussian.mcmc.dist');
-% errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
-% axis([mmin mmax ymin ymax])
-% title('Gaussian')
-% xlabel('M')
-% ylabel('dN/dM')
-% subplot(nx,ny,4)
-% data=importdata('high-mass/two-gaussian.mcmc.dist');
-% errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
-% axis([mmin mmax ymin ymax])
-% title('Two Gaussians')
-% xlabel('M')
-% ylabel('dN/dM')
-% subplot(nx,ny,5)
-% data=importdata('high-mass/log-normal.mcmc.dist');
-% errorbar(data(:,1), data(:,2), data(:,2)-data(:,3), data(:,4)-data(:,2), '-k')
-% axis([mmin mmax ymin ymax]);
-% title('Log Normal');
-% xlabel('M')
-% ylabel('dN/dM')
-% print -deps '../../Paper/plots/dist-parametric-high.eps'
-% 
-% % Non-parametric High-mass Distributions
-% curFig = curFig + 1;
-% figure(curFig);
-% nx=2;
-% ny=3;
-% mmin=2;
-% mmax=25;
-% ymin=0;
-% ymax=0.6;
-% subplot(nx,ny,1);
-% data=importdata('high-mass/histogram-1bin.mcmc.dist');
-% errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
-% axis([mmin mmax ymin ymax]);
-% title('Histogram (1 Bin)');
-% xlabel('M');
-% ylabel('dN/dM');
-% subplot(nx,ny,2);
-% data=importdata('high-mass/histogram-2bin.mcmc.dist');
-% errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
-% axis([mmin mmax ymin ymax]);
-% title('Histogram (2 Bin)');
-% xlabel('M');
-% ylabel('dN/dM');
-% subplot(nx,ny,3);
-% data=importdata('high-mass/histogram-3bin.mcmc.dist');
-% errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
-% axis([mmin mmax ymin ymax]);
-% title('Histogram (3 Bin)');
-% xlabel('M');
-% ylabel('dN/dM');
-% subplot(nx,ny,4);
-% data=importdata('high-mass/histogram-4bin.mcmc.dist');
-% errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
-% axis([mmin mmax ymin ymax]);
-% title('Histogram (4 Bin)');
-% xlabel('M');
-% ylabel('dN/dM');
-% subplot(nx,ny,5);
-% data=importdata('high-mass/histogram-5bin.mcmc.dist');
-% errorbar(data(:,1),data(:,2),data(:,2)-data(:,3),data(:,4)-data(:,2), '-k');
-% axis([mmin mmax ymin ymax]);
-% title('Histogram (5 Bin)');
-% xlabel('M');
-% ylabel('dN/dM');
-% print -deps '../../Paper/plots/dist-non-parametric-high.eps'
