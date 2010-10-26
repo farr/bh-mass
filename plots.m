@@ -400,18 +400,14 @@ print -deps '../../Paper/plots/exp-cutoff-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('gaussian.mcmc');
-nx=2; ny = 1;
-subplot(nx,ny,1);
-normalizedHist(data(:,1), 1000);
-blackHistogram();
-xlabel('\mu (Solar Mass)');
-ylabel('dN/d\mu');
-axis([5 10 -inf inf]);
-subplot(nx,ny,2);
-normalizedHist(data(:,2), 1000);
-blackHistogram();
-xlabel('\sigma (Solar Mass)');
-ylabel('dN/d\sigma');
+normalizedHist(data(:,2), 50);
+set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'})
+hold on
+normalizedHist(data(:,1), 100);
+hold off
+xlabel('\mu, \sigma (Solar Mass)');
+set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
+axis([0 10 -inf inf]);
 print -deps '../../Paper/plots/gaussian.eps'
 
 % Gaussian Mean, Sigma Plots (high-mass).
