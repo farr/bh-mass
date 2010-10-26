@@ -342,18 +342,14 @@ print -deps '../../Paper/plots/mmin-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('exp-cutoff.mcmc');
-subplot(2,1,1);
-normalizedHist(data(:,1),250);
-blackHistogram();
-xlabel('M_{min} (Solar Mass)');
-ylabel('dN/dM_{min}');
-axis([4 8 -inf inf]);
-subplot(2,1,2);
-normalizedHist(data(:,2),500);
-blackHistogram();
-xlabel('M_0 (Solar Mass)');
-ylabel('dN/dM_0');
-axis([0 5 -inf inf]);
+normalizedHist(data(:,2),100);
+set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'});
+hold on
+normalizedHist(data(:,1),100);
+hold off
+xlabel('M (Solar Mass)');
+axis([0 8 -inf inf]);
+set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
 print -deps '../../Paper/plots/exp-cutoff.eps'
 
 % Exponential plots (high-mass)
