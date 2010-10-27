@@ -10,11 +10,11 @@ let overwrite = ref false
 let options = 
   Arg.align
     (base_opts @ [("-alphamin", Arg.Set_float alphamin,
-                   sprintf "minimum exponent (default %g)" !alphamin);
+                   sprintf "amin minimum exponent (default %g)" !alphamin);
                   ("-alphamax", Arg.Set_float alphamax,
-                   sprintf "maximum exponent (default %g)" !alphamax);
+                   sprintf "amax maximum exponent (default %g)" !alphamax);
                   ("-o", Arg.Set_string outfile, 
-                   sprintf "filename for output (default %s)" !outfile);
+                   sprintf "file filename for output (default %s)" !outfile);
                   ("-overwrite", Arg.Set overwrite,
                    "overwrite the output file")])
 

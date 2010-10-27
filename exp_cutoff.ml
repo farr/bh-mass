@@ -7,7 +7,7 @@ let overwrite = ref false
 let options = 
   Arg.align
     (base_opts @ [("-o", Arg.Set_string outfile,
-                   sprintf "output file name (default %s)" !outfile);
+                   sprintf "file output file name (default %s)" !outfile);
                   ("-overwrite", Arg.Set overwrite,
                    "overwrite the output file instead of appending to it")])
 

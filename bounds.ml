@@ -17,25 +17,22 @@ let low_quantile = ref 0.01
 let high_quantile = ref 0.99
 
 let options = 
-  [("-histogram", Arg.String (fun s -> which_dist := Histogram; filename := s),
-    "use a histogram mcmc output in the given file");
-   ("-gaussian", Arg.String (fun s -> which_dist := Gaussian; filename := s),
-    "use a gaussian mcmc output in the given file");
-   ("-power-law", Arg.String (fun s -> which_dist := Power_law; filename := s),
-    "use a power-law mcmc output in the given file");
-   ("-exponential", Arg.String (fun s -> which_dist := Exponential; filename := s),
-    "use an exponential mcmc output in the given file");
-   ("-two-gaussian", Arg.String (fun s -> which_dist := Two_gaussian; filename := s),
-    "use the two-gaussian mcmc output in the given file");
-   ("-log-normal", Arg.String (fun s -> which_dist := Log_normal; filename := s),
-    "use the log-normal mcmc output in the given file");
-   ("-skew-gaussian", Arg.String (fun s -> which_dist := Skew_gaussian; filename := s),
-    "use the skew-gaussian MCMC output in the given file");
-   ("-o", Arg.Set_string outfile, "output filename") (* ; *)
-   (* ("-low-quantile", Arg.Set_float low_quantile,  *)
-   (*  Printf.sprintf "quantile of the minimum bound (default %g)" !low_quantile); *)
-   (* ("-high-quantile", Arg.Set_float high_quantile, *)
-   (*  Printf.sprintf "quantile of the maximum bound (default %g)" !high_quantile) *)]
+  Arg.align
+    ([("-histogram", Arg.String (fun s -> which_dist := Histogram; filename := s),
+       "file use a histogram mcmc output in the given file");
+      ("-gaussian", Arg.String (fun s -> which_dist := Gaussian; filename := s),
+       "file use a gaussian mcmc output in the given file");
+      ("-power-law", Arg.String (fun s -> which_dist := Power_law; filename := s),
+       "file use a power-law mcmc output in the given file");
+      ("-exponential", Arg.String (fun s -> which_dist := Exponential; filename := s),
+       "file use an exponential mcmc output in the given file");
+      ("-two-gaussian", Arg.String (fun s -> which_dist := Two_gaussian; filename := s),
+       "file use the two-gaussian mcmc output in the given file");
+      ("-log-normal", Arg.String (fun s -> which_dist := Log_normal; filename := s),
+       "file use the log-normal mcmc output in the given file");
+      ("-skew-gaussian", Arg.String (fun s -> which_dist := Skew_gaussian; filename := s),
+       "file use the skew-gaussian MCMC output in the given file");
+      ("-o", Arg.Set_string outfile, "file output filename")])
 
 let hist_bounds (bins : float array) = 
   let nbins = Array.length bins - 1 in 

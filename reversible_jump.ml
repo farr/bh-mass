@@ -14,9 +14,9 @@ let ninterpskip = ref 1
 let options = 
   Arg.align 
     (base_opts @ [("-o", Arg.Set_string outfile,
-                   Printf.sprintf "output file (default %s)" !outfile);
+                   Printf.sprintf "file output file (default %s)" !outfile);
                   ("-sampfile", Arg.String (fun s -> should_samp := true; sampfile := s),
-                   "output mcmc samples to file");
+                   "file output mcmc samples to file");
                   ("-ninterpskip", Arg.Set_int ninterpskip,
                    Printf.sprintf "nsamp record a sample for interpolation every nsamp samples in the input (default %d)" 
                      !ninterpskip)])

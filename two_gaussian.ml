@@ -8,7 +8,7 @@ let overwrite = ref false
 let options = 
   Arg.align 
     (base_opts @ [("-o", Arg.Set_string outfile,
-                   sprintf "output filename (default %s)" !outfile);
+                   sprintf "file output filename (default %s)" !outfile);
                   ("-overwrite", Arg.Set overwrite,
                    "overwrite output file with new MCMC")])
 

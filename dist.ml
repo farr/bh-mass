@@ -18,27 +18,28 @@ let outfile = ref ""
 let dist = ref No_dist
 
 let options = 
-  [("-gaussian", Arg.String (fun s -> dist := Gaussian; infile := s),
-    "use gaussian MCMC output in given file");
-   ("-histogram", Arg.String (fun s -> dist := Histogram; infile := s),
-    "use histogram MCMC output in given file");
-   ("-exponential", Arg.String (fun s -> dist := Exponential; infile := s),
-    "use cutoff exponential MCMC output in given file");
-   ("-power-law", Arg.String (fun s -> dist := Power_law; infile := s),
-    "use power-law MCMC output in given file");
-   ("-two-gaussian", Arg.String (fun s -> dist := Two_gaussian; infile := s),
-    "use two-gaussian MCMC output in given file");
-   ("-log-normal", Arg.String (fun s -> dist := Log_normal; infile := s),
-    "use log-normal MCMC output in given file");
-   ("-skew-gaussian", Arg.String (fun s -> dist := Skew_gaussian; infile := s),
-    "use skew-gaussian MCMC output in given file");
-   ("-o", Arg.Set_string outfile, "output to given file");
-   ("-mmin", Arg.Set_float mmin, 
-    sprintf "minimum mass to plot (default %g)" !mmin);
-   ("-mmax", Arg.Set_float mmax,
-    sprintf "maximum mass to plot (default %g)" !mmax);
-   ("-dm", Arg.Set_float dm,
-    sprintf "mass step for output (default %g)" !dm)]
+  Arg.align 
+    ([("-gaussian", Arg.String (fun s -> dist := Gaussian; infile := s),
+       "file use gaussian MCMC output in given file");
+      ("-histogram", Arg.String (fun s -> dist := Histogram; infile := s),
+       "file use histogram MCMC output in given file");
+      ("-exponential", Arg.String (fun s -> dist := Exponential; infile := s),
+       "file use cutoff exponential MCMC output in given file");
+      ("-power-law", Arg.String (fun s -> dist := Power_law; infile := s),
+       "file use power-law MCMC output in given file");
+      ("-two-gaussian", Arg.String (fun s -> dist := Two_gaussian; infile := s),
+       "file use two-gaussian MCMC output in given file");
+      ("-log-normal", Arg.String (fun s -> dist := Log_normal; infile := s),
+       "file use log-normal MCMC output in given file");
+      ("-skew-gaussian", Arg.String (fun s -> dist := Skew_gaussian; infile := s),
+       "file use skew-gaussian MCMC output in given file");
+      ("-o", Arg.Set_string outfile, "file output to given file");
+      ("-mmin", Arg.Set_float mmin, 
+       sprintf "mm minimum mass to plot (default %g)" !mmin);
+      ("-mmax", Arg.Set_float mmax,
+       sprintf "mm maximum mass to plot (default %g)" !mmax);
+      ("-dm", Arg.Set_float dm,
+       sprintf "d mass step for output (default %g)" !dm)])
 
 let eval_gaussian params x = 
   match params with 
