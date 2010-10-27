@@ -10,6 +10,7 @@ case $1 in
     exp*) echo "-exponential";;
     log-normal*) echo "-log-normal";;
     reversible*) echo "-rj";;
+    skew-gaussian*) echo "-skew-gaussian";;
     *) exit 1;;
 esac
 
