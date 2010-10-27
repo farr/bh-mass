@@ -14,6 +14,13 @@ let skew_gaussian xi omega alpha x =
   let arg = (x -. xi) /. omega in 
     (2.0/.omega)*.(gaussian arg)*.(gaussian_cdf (alpha*.arg))
 
+let skew_gaussian_cdf =
+  let ws = Gsl_integration.make_ws 100000 in 
+    fun xi omega alpha x -> 
+      let {Gsl_fun.res = res} = 
+        Gsl_integration.qagil (fun y -> skew_gaussian xi omega alpha y) ~b:x ~epsabs:1e-8 ~epsrel:1e-8 ws in
+        res  
+
 let delta alpha = alpha /. sqrt (1.0 +. alpha*.alpha)
 
 let mu_sigma_to_xi_omega = function 

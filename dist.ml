@@ -8,6 +8,7 @@ type dist =
   | Power_law
   | Two_gaussian
   | Log_normal
+  | Skew_gaussian
 
 let mmin = ref 0.0
 let mmax = ref 40.0 
@@ -29,6 +30,8 @@ let options =
     "use two-gaussian MCMC output in given file");
    ("-log-normal", Arg.String (fun s -> dist := Log_normal; infile := s),
     "use log-normal MCMC output in given file");
+   ("-skew-gaussian", Arg.String (fun s -> dist := Skew_gaussian; infile := s),
+    "use skew-gaussian MCMC output in given file");
    ("-o", Arg.Set_string outfile, "output to given file");
    ("-mmin", Arg.Set_float mmin, 
     sprintf "minimum mass to plot (default %g)" !mmin);
@@ -99,6 +102,13 @@ let eval_log_normal params x =
       exp (Stats.log_lognormal mu sigma x)
     | _ -> raise (Invalid_argument "eval_log_normal: bad state")
 
+let eval_skew_gaussian params x = 
+  match Skew_gaussian_base.mu_sigma_to_xi_omega params with 
+    | [|xi; omega|] -> 
+      let alpha = params.(2) in 
+        Skew_gaussian_base.skew_gaussian xi omega alpha x
+    | _ -> raise (Invalid_argument "eval_skew_gaussian: bad state")
+
 let _ = 
   Arg.parse options (fun _ -> ()) "plot_dist.{byte,native} OPTIONS ...";
   let nb = int_of_float ((!mmax -. !mmin) /. !dm +. 0.5) in 
@@ -112,6 +122,7 @@ let _ =
     | Power_law -> eval_power_law
     | Two_gaussian -> eval_two_gaussian 
     | Log_normal -> eval_log_normal
+    | Skew_gaussian -> eval_skew_gaussian
     | _ -> raise (Failure "un-recognized distribution") in
   let pts = 
     Array.map 
