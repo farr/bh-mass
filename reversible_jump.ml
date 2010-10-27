@@ -29,6 +29,10 @@ module Interp = Interpolate_pdf.Make(struct
   let point (c : float array) = c
 end)
 
+let _ = 
+  Randomize.randomize ();
+  Arg.parse options (fun _ -> ()) "reversible_jump.{byte,native} OPTIONS ..."
+
 let permutations (arr : float array) = 
   let elts = Array.to_list arr in 
   let rec perms = function 
@@ -86,6 +90,7 @@ let interp_from_file file low high =
      with 
        | End_of_file -> ());
     close_in inp;
+    Printf.fprintf stderr "Read %d samples (ninterpskip = %d).\n%!" (List.length !samples) !ninterpskip;
     let samples = Array.of_list !samples in 
       Interp.make (Array.map (fun {Mcmc.value = x} -> x) samples) low high
 
@@ -250,8 +255,6 @@ let names = [|"Power Law"; "Exp With Cutoff"; "Gaussian"; "Two Gaussians"; "Log 
               "Histogram 5"|]
 
 let _ = 
-  Randomize.randomize ();
-  Arg.parse options (fun _ -> ()) "reversible_jump.{byte,native} OPTIONS ...";
   let msamples = Masses.generate_samples !high_m !nmsamp in
   let log_likelihood = log_likelihood msamples in 
   let s0 = 
