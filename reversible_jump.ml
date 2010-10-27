@@ -124,7 +124,7 @@ let sginterp =
     [|!mmin; 0.0; !Skew_gaussian_base.alpha_min|]
     [|!mmax; (!mmax -. !mmin); !Skew_gaussian_base.alpha_max|]
 
-let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp; lninterp|]
+let interps = Array.append hinterps [|ginterp; pinterp; einterp; tginterp; lninterp; sginterp|]
 
 let interp_of_state = function 
   | Histogram(state) -> 
@@ -270,7 +270,7 @@ let _ =
                      like_prior = {Mcmc.log_prior = log_prior s0;
                                    log_likelihood = log_likelihood s0}} in 
   let next = Mcmc.make_mcmc_sampler log_likelihood log_prior jump_proposal log_jump_prob in
-  let counts = Array.make 10 0 in 
+  let counts = Array.make 11 0 in 
     for i = 1 to !nbin do 
       current := next !current
     done;
