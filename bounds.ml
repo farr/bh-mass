@@ -8,6 +8,7 @@ type dist =
   | Exponential
   | Two_gaussian
   | Log_normal
+  | Skew_gaussian
 
 let which_dist = ref None
 let filename = ref ""
@@ -28,6 +29,8 @@ let options =
     "use the two-gaussian mcmc output in the given file");
    ("-log-normal", Arg.String (fun s -> which_dist := Log_normal; filename := s),
     "use the log-normal mcmc output in the given file");
+   ("-skew-gaussian", Arg.String (fun s -> which_dist := Skew_gaussian; filename := s),
+    "use the skew-gaussian MCMC output in the given file");
    ("-o", Arg.Set_string outfile, "output filename") (* ; *)
    (* ("-low-quantile", Arg.Set_float low_quantile,  *)
    (*  Printf.sprintf "quantile of the minimum bound (default %g)" !low_quantile); *)
@@ -109,6 +112,17 @@ let log_normal_bounds state =
         [|exp logxmin; exp logxmax|]
     | _ -> raise (Invalid_argument "log_normal_bounds: bad state")
 
+let skew_gaussian_bounds state = 
+  match Skew_gaussian_base.mu_sigma_to_xi_omega state with 
+    | [|xi; omega|] -> 
+      let alpha = state.(2) in 
+      let f frac x = 
+        Skew_gaussian_base.skew_gaussian_cdf xi omega alpha x -. frac in 
+      let fmin x = f 0.01 x and 
+          fmax x = f 0.99 x in 
+        [| solve fmin 0.0; solve fmax 0.0|]
+    | _ -> raise (Invalid_argument "skew_gaussian_bounds: bad state")
+
 let _ = 
   Arg.parse options (fun _ -> ()) "bounds.{byte,native} OPTIONS ...";
   let get_bounds = 
@@ -119,6 +133,7 @@ let _ =
       | Histogram -> hist_bounds
       | Two_gaussian -> two_gaussian_bounds
       | Log_normal -> log_normal_bounds
+      | Skew_gaussian -> skew_gaussian_bounds
       | None -> raise (Failure "You must specify a distribution to read from.") in 
   let inp = open_in !filename in 
   let samples = Read_write.read (fun x -> x) inp in 
