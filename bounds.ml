@@ -67,29 +67,25 @@ let power_law_bounds = function
         ((99.0*.mmax**ap1 +. mmin**ap1)/.100.0)**rap1|]
   | _ -> raise (Invalid_argument "power_law_bounds: bad state")
 
-let solve f x0 = 
+let solve f = 
   let dx = 
     let rec dx_loop dx = 
-      let fxlow = f (x0 -. dx) and 
-          fxhigh = f (x0 +. dx) in 
+      let fxlow = f (~-.dx) and 
+          fxhigh = f dx in 
         if fxlow *. fxhigh <= 0.0 then 
           dx
         else
           dx_loop (2.0*.dx) in 
       dx_loop 1.0 in 
-  let rec loop x0 x1 fx0 fx1 = 
-    if abs_float (x0 -. x1) < 1e-8 then 
-      (fx0*.x1 -. fx1*.x0) /. (fx0 -. fx1)
-    else
-      let xmid = 0.5*.(x0 +. x1) in 
-      let fxmid = f xmid in 
-        if fx0 *. fxmid <= 0.0 then 
-          loop x0 xmid fx0 fxmid
-        else
-          loop xmid x1 fxmid fx1 in 
-  let x0 = x0 -. dx and 
-      x1 = x0 +. dx in 
-    loop x0 x1 (f x0) (f x1)
+  let solver = Gsl_root.Bracket.make Gsl_root.Bracket.BRENT f (~-.dx) dx in 
+  let rec loop () = 
+    Gsl_root.Bracket.iterate solver;
+    let (low, high) = Gsl_root.Bracket.interval solver in 
+      if Gsl_root.test_interval ~lo:low ~up:high ~epsabs:1e-3 ~epsrel:0.0 then 
+        Gsl_root.Bracket.root solver
+      else
+        loop () in 
+    loop ()
 
 let two_gaussian_bounds = function 
   | [|mu1; mu2; sigma1; sigma2; a|] -> 
@@ -98,7 +94,7 @@ let two_gaussian_bounds = function
             +. (1.0 -. a)*.(Gsl_sf.erf (0.70710678118654752440 *. (x -. mu2) /. sigma2))) -. frac in 
     let fmin x = f 0.01 x and 
         fmax x = f 0.99 x in 
-      [| solve fmin 0.0; solve fmax 0.0|]
+      [| solve fmin; solve fmax|]
   | _ -> raise (Invalid_argument "two_gaussian_bounds: bad state")
 
 let log_normal_bounds state = 
@@ -117,7 +113,7 @@ let skew_gaussian_bounds state =
         Skew_gaussian_base.skew_gaussian_cdf xi omega alpha x -. frac in 
       let fmin x = f 0.01 x and 
           fmax x = f 0.99 x in 
-        [| solve fmin 0.0; solve fmax 0.0|]
+        [| solve fmin; solve fmax|]
     | _ -> raise (Invalid_argument "skew_gaussian_bounds: bad state")
 
 let _ = 
