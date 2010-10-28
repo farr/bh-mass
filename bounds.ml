@@ -129,14 +129,15 @@ let _ =
       | Skew_gaussian -> skew_gaussian_bounds
       | None -> raise (Failure "You must specify a distribution to read from.") in 
   let inp = open_in !filename in 
-  let samples = Read_write.read (fun x -> x) inp in 
-    close_in inp;
-    let out = open_out !outfile in 
-      Array.iter 
-        (fun {Mcmc.value = samp} -> 
-          match get_bounds samp with 
-            | [|low; high|] -> 
-              fprintf out "%g %g\n" low high
-            | _ -> raise (Failure "bad bounds"))
-        samples;
-      close_out out
+  let out = open_out !outfile in 
+    try 
+      while true do 
+        let sample = Read_write.read_sample (fun x -> x) inp in 
+          match get_bounds sample.Mcmc.value with 
+            | [|low; high|] -> fprintf out "%g %g\n" low high
+            | _ -> raise (Failure "bad bounds")
+      done              
+    with
+      | End_of_file -> 
+        close_in inp;
+        close_out out;
