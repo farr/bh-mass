@@ -1,17 +1,5 @@
 curFig=1;
 
-% Reverse Jump Evidence
-curFig = curFig + 1;
-figure(curFig);
-colordef white;
-rjData=importdata('reversible-jump.dat');
-xs=0:(length(rjData)-1);
-errorbar(xs, rjData(:,1), rjData(:,2),'+k')
-axis([-0.5 9.5 -inf inf]);
-set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
-ylabel('Relative Evidence');
-print -deps '../../Paper/plots/rj.eps'
-
 % Distributions
 curFig = curFig + 1;
 figure(curFig);
@@ -186,16 +174,18 @@ names={'A0620'; 'Nova Mus 1991';
        'V4641 Sgr'; 'GRS 1915'; 'XTE J1118'; 'GS 1354';
        'XTE J1550'; 'GS 2000'; 'XTE J1650'; 'GS 2023'};
 for i = 1:length(filenames)
-    subplot(nx,ny,i);
+    h=subplot(nx,ny,i);
     data=importdata(filenames{i});
-    normalizedHist(data);
-    blackHistogram();   
+    hist(data,100);
+    set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'black'}, {'EdgeColor'}, {'black'});
     axis([0 30 -inf inf]);
+    set(gca, 'YTickLabel', []);
+    if i <= 12 
+        set(gca, 'XTickLabel', []);
+    end
     if i > 12
         xlabel('M (Solar Mass)')
     end
-%    ylabel('dN/dM')
-    set(gca, 'ytick', []);
     title(names{i});
 end
 print -deps '../../Paper/plots/all-masses.eps'
@@ -216,11 +206,13 @@ for i = 1:length(filenames)
     normalizedHist(data);
     blackHistogram();
     axis([0 80 -inf inf]);
-%    ylabel('dN/dM');
     if i > 3
         xlabel('M (Solar Mass)');
     end
-    set(gca, 'ytick', []);
+    set(gca, 'YTickLabel', []);
+    if i <= 3
+        set(gca, 'XTickLabel', []);
+    end
     title(names{i});
 end
 print -deps '../../Paper/plots/high-masses.eps'
@@ -229,42 +221,43 @@ print -deps '../../Paper/plots/high-masses.eps'
 curFig = curFig + 1;
 figure(curFig);
 data=importdata('power-law.mcmc');
-subplot(2,2,1);
-normalizedHist(data(:,1),200);
-blackHistogram();
-xlabel('M_{min} (Solar Mass)');
-ylabel('dN/dM_{min}');
-subplot(2,2,2)
-normalizedHist(data(:,2),200);
-blackHistogram();
-xlabel('M_{max} (Solar Mass)');
-ylabel('dN/dM_{max}');
-subplot(2,2,[3 4]);
-normalizedHist(data(:,3),200);
-blackHistogram();
+subplot(2,1,1);
+hist(data(:,1),50);
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black', 'LineStyle', '--');
+hold on
+hist(data(:,2),200);
+hold off
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
+xlabel('M (Solar Mass)');
+set(gca, 'YTickLabel', []);
+axis([0 15 -inf inf]);
+legend('M_{min}', 'M_{max}');
+subplot(2,1,2);
+hist(data(:,3),100);
+set(findobj(gca,'Type', 'patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
 xlabel('\alpha');
-ylabel('dN/d\alpha');
+set(gca, 'YTickLabel', []);
 print -deps '../../Paper/plots/power-law.eps'
 
 % Power-law Plots (high-mass)
 curFig = curFig + 1;
 figure(curFig);
 data=importdata('high-mass/power-law.mcmc');
-subplot(2,2,1);
-normalizedHist(data(:,1),200);
-blackHistogram();
-xlabel('M_{min} (Solar Mass)');
-ylabel('dN/dM_{min}');
-subplot(2,2,2);
-normalizedHist(data(:,2),200);
-blackHistogram();
-xlabel('M_{max} (Solar Mass)');
-ylabel('dN/dM_{max}');
-subplot(2,2,[3 4]);
-normalizedHist(data(:,3),200);
-blackHistogram();
+subplot(2,1,1);
+hist(data(:,1),30);
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black', 'LineStyle', '--');
+xlabel('M (Solar Mass)');
+hold on
+hist(data(:,2),100);
+hold off
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
+set(gca, 'YTickLabel', []);
+legend('M_{min}', 'M_{max}');
+subplot(2,1,2);
+hist(data(:,3),200);
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
 xlabel('\alpha');
-ylabel('dN/d\alpha');
+set(gca, 'YTickLabel', []);
 print -deps '../../Paper/plots/power-law-high.eps'
 
 % Power-law 2D correlations
@@ -299,13 +292,18 @@ ny=3;
 for i = 1:length(files)
     subplot(nx,ny,i);
     data=importdata(files{i});
-    normalizedHist(data(:,1),1000);
+    [ns,xout]=hist(data(:,1),100);
+    bar(xout, ns);
+    set(findobj(gca,'Type','patch'),'FaceColor','black','EdgeColor','black');
     axis([max(0,min(data(:,1))) inf -inf inf]);
-    blackHistogram();
+    hold on
+    x10=quantile(data(:,1),0.1);
+    line([x10 x10], [0 max(ns)],'Color','black');
+    hold off
     title(names{i});
-    set(gca, 'ytick', []);
+    set(gca, 'YTickLabel', []);
     if i > 7
-        xlabel('M_{min} (Solar Mass)');
+        xlabel('M_{1%} (Solar Mass)');
     end
 end
 print -deps '../../Paper/plots/mmin.eps'
@@ -327,13 +325,18 @@ ny=3;
 for i = 1:length(files)
     subplot(nx,ny,i);
     data=importdata(files{i});
-    normalizedHist(data(:,1),1000);
+    [ns,xout]=hist(data(:,1),100);
+    bar(xout,ns);
+    set(findobj(gca,'Type','patch'),'FaceColor','black','EdgeColor','black');
     axis([max(0,min(data(:,1))) inf -inf inf]);
-    blackHistogram();
+    hold on
+    x10=quantile(data(:,1),0.1);
+    line([x10 x10], [0 max(ns)], 'Color', 'black');
+    hold off
     title(names{i});
-    set(gca, 'ytick', []);
+    set(gca, 'YTickLabel', []);
     if i > 7 
-        xlabel('M_{min} (Solar Mass)');
+        xlabel('M_{1%} (Solar Mass)');
     end
 end
 print -deps '../../Paper/plots/mmin-high.eps'
@@ -342,32 +345,32 @@ print -deps '../../Paper/plots/mmin-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('exp-cutoff.mcmc');
-normalizedHist(data(:,2),100);
+hist(data(:,2),100);
 set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'});
 hold on
-normalizedHist(data(:,1),100);
+hist(data(:,1),100);
 hold off
 xlabel('M (Solar Mass)');
+set(gca, 'YTickLabel', []);
 axis([0 8 -inf inf]);
 set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
+legend('M_0', 'M_{min}');
 print -deps '../../Paper/plots/exp-cutoff.eps'
 
 % Exponential plots (high-mass)
 curFig=curFig+1;
 figure(curFig);
 data=importdata('high-mass/exp-cutoff.mcmc');
-subplot(2,1,1);
-normalizedHist(data(:,1),250);
-blackHistogram();
+subplot(2,1,1)
+hist(data(:,1),100);
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
 xlabel('M_{min} (Solar Mass)');
-ylabel('dN/dM_{min}');
-axis([2 8 -inf inf]);
+set(gca,'YTickLabel', []);
 subplot(2,1,2);
-normalizedHist(data(:,2),500);
-blackHistogram();
-xlabel('M_0');
-ylabel('dN/dM_0');
-axis([0 15 -inf inf]);
+hist(data(:,2), 100);
+set(findobj(gca,'Type','patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
+xlabel('M_0 (Solar Mass)');
+set(gca,'YTickLabel', []);
 print -deps '../../Paper/plots/exp-cutoff-high.eps'
 
 % 2D Exponential Plots
@@ -400,32 +403,32 @@ print -deps '../../Paper/plots/exp-cutoff-high.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('gaussian.mcmc');
-normalizedHist(data(:,2), 50);
+hist(data(:,2), 50);
 set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'})
 hold on
-normalizedHist(data(:,1), 100);
+hist(data(:,1), 100);
 hold off
 xlabel('\mu, \sigma (Solar Mass)');
+set(gca, 'YTickLabel', []);
 set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
 axis([0 10 -inf inf]);
+legend('\sigma', '\mu');
 print -deps '../../Paper/plots/gaussian.eps'
 
 % Gaussian Mean, Sigma Plots (high-mass).
 curFig=curFig+1;
 figure(curFig);
 data=importdata('high-mass/gaussian.mcmc');
-nx=2; ny = 1;
-subplot(nx,ny,1);
-normalizedHist(data(:,1), 1000);
-blackHistogram();
-xlabel('\mu (Solar Mass)');
-ylabel('dN/d\mu');
-axis([5 15 -inf inf]);
-subplot(nx,ny,2);
-normalizedHist(data(:,2), 1000);
-blackHistogram();
-xlabel('\sigma (Solar Mass)');
-ylabel('dN/d\sigma');
+hist(data(:,2), 50);
+set(findobj(gca, 'Type', 'patch'), 'FaceColor', 'none', 'EdgeColor', 'black', 'LineStyle', '--');
+hold on
+hist(data(:,1), 75);
+hold off
+set(findobj(gca, 'Type', 'patch'), 'FaceColor', 'none', 'EdgeColor', 'black');
+xlabel('\mu, \sigma (Solar Mass)');
+set(gca, 'YTickLabel', []);
+legend('\sigma', '\mu');
+axis([0 14 -inf inf]);
 print -deps '../../Paper/plots/gaussian-high.eps'
 
 % Log Normal
@@ -439,26 +442,24 @@ normalizedHist(data(:,1),100);
 hold off
 set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
 xlabel('<M>, \sigma_M (Solar Mass)');
+set(gca, 'YTickLabel', []);
 axis([0 10 -inf inf]);
+legend('\sigma_M', '<M>');
 print -deps '../../Paper/plots/log-normal.eps'
 
 % Log Normal (high-mass)
 curFig=curFig+1;
 figure(curFig);
 data=importdata('high-mass/log-normal.mcmc');
-nx=2;ny=1;
-subplot(nx,ny,1);
-normalizedHist(data(:,1),1000);
-blackHistogram();
-xlabel('<M> (Solar Mass)');
-ylabel('dN/d<M>');
-axis([4 15 -inf inf]);
-subplot(nx,ny,2);
-normalizedHist(data(:,2),1000);
-blackHistogram();
-xlabel('\sigma_M (Solar Mass)');
-ylabel('dN/d\sigma_M');
-axis([0 8 -inf inf]);
+hist(data(:,2),100);
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black','LineStyle','--');
+xlabel('<M>, \sigma_M (Solar Mass)');
+set(gca,'YTickLabel',[]);
+hold on
+hist(data(:,1),100);
+hold off
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black');
+legend('\sigma_M', '<M>');
 print -deps '../../Paper/plots/log-normal-high.eps'
 
 % Two Gaussian
@@ -467,25 +468,28 @@ figure(curFig);
 data=importdata('two-gaussian.mcmc');
 nx=3;ny=1;
 subplot(nx,ny,1);
-normalizedHist(data(:,3),50);
+hist(data(:,3),50);
 set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'});
 hold on
-normalizedHist(data(:,1),100);
+hist(data(:,1),100);
 hold off
 axis([0 10 -inf inf])
 xlabel('\mu_1, \sigma_1 (Solar Mass)');
+set(gca, 'YTickLabel', []);
+legend('\sigma_1', '\mu_1');
 set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'})
 subplot(nx,ny,2);
-normalizedHist(data(:,4),50);
+hist(data(:,4),50);
 set(findobj(gca, 'Type', 'patch'), {'LineStyle'}, {'--'})
 hold on
-normalizedHist(data(:,2),100);
+hist(data(:,2),100);
 hold off
 axis([0 15 -inf inf]);
 xlabel('\mu_2, \sigma_2 (Solar Mass)');
 set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'})
+legend('\sigma_2', '\mu_2');
 subplot(nx,ny,3);
-normalizedHist(data(:,5),100);
+hist(data(:,5),100);
 set(findobj(gca, 'Type', 'patch'), {'FaceColor'}, {'none'}, {'EdgeColor'}, {'black'});
 xlabel('\alpha');
 print -deps '../../Paper/plots/two-gaussian.eps'
@@ -494,42 +498,62 @@ print -deps '../../Paper/plots/two-gaussian.eps'
 curFig=curFig+1;
 figure(curFig);
 data=importdata('high-mass/two-gaussian.mcmc');
-nx=3;ny=2;
+nx=3;ny=1;
 subplot(nx,ny,1);
-normalizedHist(data(:,1),100);
-blackHistogram();
-xlabel('\mu_1 (Solar Mass)');
-ylabel('dN/d\mu_1');
+hist(data(:,3),75);
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black','LineStyle','--');
+xlabel('\mu_1, \sigma_1 (Solar Mass)');
+set(gca,'YTickLabel',[]);
+hold on
+hist(data(:,1),200);
+hold off
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black');
+legend('\sigma_1','\mu_1');
 subplot(nx,ny,2);
-normalizedHist(data(:,3),100);
-blackHistogram();
-xlabel('\sigma_1 (Solar Mass)');
-ylabel('dN/d\sigma_1');
+hist(data(:,4),50);
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black','LineStyle','--');
+hold on
+hist(data(:,2),150);
+hold off
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black');
+xlabel('\mu_2, \sigma_2 (Solar Mass)');
+set(gca,'YTickLabel',[]);
+legend('\sigma_2','\mu_2');
 subplot(nx,ny,3);
-normalizedHist(data(:,2),100);
-blackHistogram();
-xlabel('\mu_2 (Solar Mass)');
-ylabel('dN/d\mu_2');
-subplot(nx,ny,4);
-normalizedHist(data(:,4),100);
-blackHistogram();
-xlabel('\sigma_2 (Solar Mass)');
-ylabel('dN/d\sigma_2');
-subplot(nx,ny,[5 6]);
-normalizedHist(data(:,5),100);
-blackHistogram();
+hist(data(:,5),100);
+set(findobj(gca,'Type','patch'),'FaceColor','none','EdgeColor','black');
 xlabel('\alpha');
-ylabel('dN/d\alpha');
+set(gca,'YTickLabel',[]);
 print -deps '../../Paper/plots/two-gaussian-high.eps'
+
+% Reverse Jump Evidence
+curFig = curFig + 1;
+figure(curFig);
+rjData=importdata('reversible-jump.dat');
+xs=1:(length(rjData));
+errorbar(xs, rjData(:,1), rjData(:,2),'+k')
+hold on
+h=bar(rjData(:,1));
+hold off
+set(h, 'EdgeColor', 'black', 'FaceColor', 'none');
+axis([0.5 10.5 -inf inf]);
+set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
+xlabel('Model');
+ylabel('Relative Evidence');
+print -deps '../../Paper/plots/rj.eps'
 
 % High-mass Reverse Jump Evidence
 curFig = curFig + 1;
 figure(curFig);
-colordef white;
 rjData=importdata('high-mass/reversible-jump.dat');
-xs=0:(length(rjData)-1);
+xs=1:(length(rjData));
 errorbar(xs, rjData(:,1), rjData(:,2), '+k');
-axis([-0.5 9.5 -inf inf]);
+hold on
+h=bar(rjData(:,1));
+hold off
+set(h,'FaceColor','none','EdgeColor','black');
+axis([0.5 10.5 -inf inf]);
 set(gca, 'XTickLabel', {'PL', 'E', 'G', 'TG', 'LN', 'H1', 'H2', 'H3', 'H4', 'H5'});
+xlabel('Model');
 ylabel('Relative Probability');
 print -deps '../../Paper/plots/rj-high.eps'
