@@ -1,5 +1,6 @@
 <test> : include
+<rj_test> : include
 
-<**/*.{ml,mli,native,byte}> : use_unix, use_plplot, use_mpi, use_mcmc, use_bigarray, use_gsl, debug
+<**/*.{ml,mli,native,byte}> : use_unix, use_mcmc, use_bigarray, use_gsl, debug
 
-<test/*.{ml,mli,native,byte}> : use_unix, use_oUnit
+<test/*.{ml,mli,native,byte}> : use_oUnit
