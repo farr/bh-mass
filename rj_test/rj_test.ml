@@ -30,6 +30,7 @@ let _ =
       g_jump_prop _ = Interp.draw interp_gauss in 
   let log_e_jump_prob _ x = log (Interp.jump_prob interp_egg () x) and 
       log_g_jump_prob _ x = log (Interp.jump_prob interp_gauss () x) in 
+    Mcmc.reset_counters ();
   let rj_samps = 
     Mcmc.rjmcmc_array ~nskip:100 !nrj
       ((fun x -> Likelihoods.log_egg_carton_likelihood !ncarton x), 
@@ -41,6 +42,9 @@ let _ =
       (log_e_jump_prob, log_g_jump_prob)
       (0.5, 0.5)
       (Interp.draw interp_egg, Interp.draw interp_gauss) in 
+  let (nacc, nrej) = Mcmc.get_counters () in
   let (ne, ng) = Mcmc.rjmcmc_model_counts rj_samps in 
     Printf.printf "With %d egg carton and %d Gaussian counts, evidence ratio is %g\n"
-      ne ng (Mcmc.rjmcmc_evidence_ratio rj_samps)
+      ne ng (Mcmc.rjmcmc_evidence_ratio rj_samps);
+    Printf.printf "With %d accepted and %d rejected steps, have ratio %g\n"
+      nacc nrej ((float_of_int nacc) /. (float_of_int nrej))
