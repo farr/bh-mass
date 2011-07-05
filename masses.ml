@@ -1,24 +1,27 @@
 open Stats
 
-let make_mass_generator draw_f draw_q draw_i = 
-  fun () -> 
-    let f = abs_float (draw_f ()) and 
-        q = draw_q () and 
-        i = draw_i () in 
-    let qp1 = q +. 1.0 and 
-        si = abs_float (sin i) in 
-      f *. qp1 *. qp1 /. (si *. si *. si)
+let iso_inclinations = ref false
 
 let pi = 3.1415926535897932385
-
-let rad_of_deg d = 
-  d *. pi /. 180.0
+let pio2 = pi /. 2.0
 
 let draw_isotropic imin imax = 
   let cmin = cos imax and 
       cmax = cos imin in 
   let c = cmin +. (Random.float (cmax -. cmin)) in 
   acos c
+
+let make_mass_generator draw_f draw_q draw_i = 
+  fun () -> 
+    let f = abs_float (draw_f ()) and 
+        q = draw_q () and 
+        i = if !iso_inclinations then draw_isotropic 0.0 pio2 else draw_i () in 
+    let qp1 = q +. 1.0 and 
+        si = abs_float (sin i) in 
+      f *. qp1 *. qp1 /. (si *. si *. si)
+
+let rad_of_deg d = 
+  d *. pi /. 180.0
 
 (* Greiner, Cuby, McCaughrean, 2001.  (Mass ratio derived from quoted masses!) *)
 let grs_1915 = 

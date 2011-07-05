@@ -11,7 +11,8 @@ let options =
    ("-o", Arg.Set_string outfile, 
     sprintf "output to given file name (default %s)" !outfile);
    ("-high-mass", Arg.Set high_m,
-    "include high-mass objects in sample")]
+    "include high-mass objects in sample");
+   ("-iso", Arg.Set Masses.iso_inclinations, "isotropic inclinations")]
 
 let _ = 
   Randomize.randomize ();
