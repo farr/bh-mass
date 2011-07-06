@@ -13,13 +13,13 @@ let options =
     (base_opts @ [("-nbinmax", Arg.Set_int nbinmax,
                    sprintf "nbmax maximum number of bins to allow (default %d)" !nbinmax);
                   ("-fixedbin", Arg.Set fixedbin,
-                   sprintf "fix the number of bins to the value of the nbin argument");
+                   sprintf " fix the number of bins to the value of the nbin argument");
                   ("-numbin", Arg.Set_int numbin,
                    sprintf "nbin number of bins to use when in fixedbin mode (default %d)" !numbin);
                   ("-o", Arg.Set_string outfile,
                    sprintf "file output file name (default %s)" !outfile);
                   ("-overwrite", Arg.Set overwrite,
-                   "overwrite the output file instead of appending to it")])
+                   " overwrite the output file instead of appending to it")])
 
 let decrease_bins bins = 
   let n = Array.length bins in 

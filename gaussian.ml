@@ -11,7 +11,7 @@ let options =
     (base_opts @ [("-o", Arg.Set_string outfile, 
                    sprintf "file output file for the mcmc (default %s)" !outfile);
                   ("-overwrite", Arg.Set overwrite,
-                   "overwrite the pre-existing MCMC samples in output file")])
+                   " overwrite the pre-existing MCMC samples in output file")])
 
 let _ = 
   Randomize.randomize ();
