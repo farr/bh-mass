@@ -23,4 +23,5 @@ let base_opts =
     sprintf "nb number of burn-in samples (default %d)" !nbin);
    ("-seed", Arg.Int (fun s -> Random.init s), "s initialize RNG with given seed");
    ("-high-mass", Arg.Set high_m,
-    "use high-mass objects in sample")]
+    " use high-mass objects in sample");
+   ("-iso", Arg.Set Masses.iso_inclinations, " use isotropic inclinations when generating masses")]
