@@ -19,14 +19,30 @@ let log_likelihood msamples = function
       msamples
   | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
-let log_prior = function 
+let valid_state = function 
   | [|mu; sigma|] -> 
-    if mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
-      mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin then 
+    mu >= !mmin && mu <= !mmax && sigma >= 0.0 && 
+      mu +. 2.0*.sigma <= !mmax && mu -. 2.0*.sigma >= !mmin 
+  | _ -> false
+
+let log_prior state = 
+    if valid_state state then 
       2.0794415416798359283 -. 2.0*.(log (!mmax -. !mmin))
     else
       neg_infinity
-  | _ -> raise (Failure "log_prior: bad state")
+
+let draw_prior () = 
+  let sigma_min = 0.0 and 
+      sigma_max = (!mmax -. !mmin) /. 4.0 in
+  let rec dp_loop () = 
+    let mu = Stats.draw_uniform !mmin !mmax and 
+        sigma = Stats.draw_uniform sigma_min sigma_max in 
+    let state = [|mu; sigma|] in 
+      if valid_state state then 
+        state
+      else
+        dp_loop () in 
+    dp_loop ()
 
 let jump_proposal = function 
   | [|mu; sigma|] -> 

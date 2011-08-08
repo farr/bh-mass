@@ -17,14 +17,28 @@ let musigma_to_msigma = function
       [|m; s|]
   | _ -> raise (Invalid_argument "musigma_to_msigma")
 
-let log_prior = function 
+let valid_state = function 
   | [|m; sigmam|] -> 
-    if m >= !mmin && m <= !mmax && 
-      sigmam > 0.0 && sigmam <= (!mmax -. m)/.2.0 then 
-      1.3862943611198906188 -. 2.0*.(log (!mmax -. !mmin)) (* Log(4) is first constant. *)
-    else
-      neg_infinity
-  | _ -> raise (Invalid_argument "log_prior: bad state")
+    m >= !mmin && m <= !mmax && 
+      sigmam > 0.0 && sigmam <= (!mmax -. m)/.2.0 
+  | _ -> false
+
+let log_prior state = 
+  if valid_state state then 
+    1.3862943611198906188 -. 2.0*.(log (!mmax -. !mmin)) (* Log(4) is first constant. *)
+  else
+    neg_infinity
+
+let draw_prior () = 
+  let sigma_min = 0.0 and 
+      sigma_max = (!mmax -. !mmin) /. 2.0 in 
+  let rec dp_loop () = 
+    let state = [|Stats.draw_uniform !mmin !mmax; Stats.draw_uniform sigma_min sigma_max|] in 
+      if valid_state state then 
+        state
+      else
+        dp_loop () in 
+    dp_loop ()
 
 let log_likelihood msamples state = 
   match msigma_to_musigma state with 

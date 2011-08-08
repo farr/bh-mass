@@ -31,3 +31,13 @@ let log_prior state =
       else
         neg_infinity
     | _ -> raise (Invalid_argument "log_prior: bad state")
+
+let rec draw_prior () = 
+  let mlow = Stats.draw_uniform !mmin !mmax and 
+      mhigh = Stats.draw_uniform !mmin !mmax and 
+      alpha = Stats.draw_uniform !alphamin !alphamax in 
+  let state = [|mlow; mhigh; alpha|] in 
+    if log_prior state = neg_infinity then 
+      draw_prior ()
+    else
+      state

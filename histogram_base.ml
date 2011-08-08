@@ -63,3 +63,15 @@ let log_prior bins =
       (log_factorial n) +. log_bin_factor -. (float_of_int n)*.(log (!mmax -. !mmin))
     else
       neg_infinity
+
+let draw_prior nbin () = 
+  if !fixedbin then 
+    raise (Failure "draw_prior: cannot draw from prior with varying numbers of bins")
+  else begin
+    let bins = Array.make (nbin+1) 0.0 in 
+      for i = 0 to nbin do 
+        bins.(i) <- Stats.draw_uniform !mmin !mmax
+      done;
+      Array.fast_sort Pervasives.compare bins;
+      bins
+  end

@@ -25,6 +25,19 @@ let log_prior = function
       neg_infinity
   | _ -> raise (Failure "log_prior: bad state")
 
+let draw_prior () = 
+  let m0_min = 0.0 and 
+      m0_max = (!mmax -. !mmin) /. 2.0 in 
+  let rec dp_loop () = 
+    let mc = Stats.draw_uniform !mmin !mmax and 
+        m0 = Stats.draw_uniform m0_min m0_max in 
+    let state = [|mc; m0|] in 
+      if log_prior state = neg_infinity then 
+        dp_loop ()
+      else
+        state in 
+    dp_loop ()
+
 let jump_proposal = function 
   | [|mc; m0|] -> 
     [|Mcmc.uniform_wrapping !mmin !mmax 1.0 mc;

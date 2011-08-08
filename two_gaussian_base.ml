@@ -36,3 +36,14 @@ let log_prior = function
           lp2 = log_prior1 mu2 sigma2 in 
         0.69314718055994530942 +. lp1 +. lp2 (* Account for factor of two with first number. *)
   | _ -> raise (Invalid_argument "log_prior: bad state")
+
+let rec draw_prior () = 
+  match ((Gaussian_base.draw_prior ()), (Gaussian_base.draw_prior ())) with 
+    | [|mu1; sigma1|], [|mu2; sigma2|] -> 
+      let a = Stats.draw_uniform 0.0 1.0 in 
+      let state = [|mu1; mu2; sigma1; sigma2; a|] in 
+        if log_prior state = neg_infinity then 
+          draw_prior ()
+        else
+          state
+    | _ -> raise (Failure "draw_prior: Gaussian_base.draw_prior returned bad state")
