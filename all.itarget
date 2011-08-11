@@ -3,6 +3,7 @@ combine_rj.native
 direct_evidence.native
 dist.native
 exp_cutoff.native
+exp_cutoff_nested.native
 gaussian.native
 gaussian_nested.native
 harmonic_evidence.native
