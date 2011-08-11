@@ -65,7 +65,7 @@ let log_prior bins =
       neg_infinity
 
 let draw_prior nbin () = 
-  if !fixedbin then 
+  if not !fixedbin then 
     raise (Failure "draw_prior: cannot draw from prior with varying numbers of bins")
   else begin
     let bins = Array.make (nbin+1) 0.0 in 
