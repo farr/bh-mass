@@ -13,6 +13,7 @@ masses.native
 mass_hist.native
 nbin_counts.native
 power_law.native
+power_law_nested.native
 random_histogram.native
 read_write_test.native
 reversible_jump.native
