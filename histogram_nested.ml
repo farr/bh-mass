@@ -33,7 +33,6 @@ let _ =
   let draw_prior () = draw_prior !numbin () in 
   let nested_results = 
     Nested.nested_evidence 
-      ~observer:observer
       ~nlive:!nlive
       ~nmcmc:!nmcmc
       draw_prior

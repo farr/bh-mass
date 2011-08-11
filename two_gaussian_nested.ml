@@ -28,7 +28,6 @@ let _ =
   let log_likelihood musig = log_likelihood msamples musig in 
   let nested_results = 
     Nested.nested_evidence 
-      ~observer:observer
       ~nlive:!nlive
       ~nmcmc:!nmcmc
       draw_prior
