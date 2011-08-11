@@ -4,6 +4,7 @@ direct_evidence.native
 dist.native
 exp_cutoff.native
 gaussian.native
+gaussian_nested.native
 harmonic_evidence.native
 histogram.native
 log_normal.native
