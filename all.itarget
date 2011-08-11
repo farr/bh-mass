@@ -9,6 +9,7 @@ gaussian_nested.native
 harmonic_evidence.native
 histogram.native
 log_normal.native
+log_normal_nested.native
 masses.native
 mass_hist.native
 nbin_counts.native
