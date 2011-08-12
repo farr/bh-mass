@@ -3,6 +3,7 @@ open Dist_base
 let log_likelihood msamples = function 
   | [|mc; m0|] -> 
     let norm = (exp (mc /. m0)) /. m0 in
+    let ll = 
       List.fold_left
         (fun ll msamp -> 
           let n = Array.length msamp in 
@@ -14,7 +15,11 @@ let log_likelihood msamples = function
             done;
             ll +. log (!overlap /. (float_of_int n)))
         0.0
-        msamples
+        msamples in 
+      (* For some reason, have to worry about NaN's here? *)
+      match classify_float ll with 
+        | FP_nan -> neg_infinity
+        | _ -> ll
   | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
 let log_prior = function 
