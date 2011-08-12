@@ -17,9 +17,9 @@ let log_likelihood msamples = function
         0.0
         msamples in 
       (* For some reason, have to worry about NaN's here? *)
-      match classify_float ll with 
+      (match classify_float ll with 
         | FP_nan -> neg_infinity
-        | _ -> ll
+        | _ -> ll)
   | _ -> raise (Invalid_argument "log_likelihood: bad state")
 
 let log_prior = function 
