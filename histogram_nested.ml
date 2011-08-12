@@ -31,7 +31,6 @@ let _ =
   let msamples = Masses.generate_samples !high_m !nmsamp in 
   let log_likelihood musig = log_likelihood msamples musig in 
   let draw_prior () = draw_prior !numbin () in 
-    Printf.printf "nlive = %d, nmcmc = %d\n%!" !nlive !nmcmc;
   let nested_results = 
     Nested.nested_evidence 
       ~nlive:!nlive
