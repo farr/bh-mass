@@ -6,15 +6,15 @@ open Stats
 let numbin = ref 1
 let outfile = ref "histogram.nested"
 let nlive = ref 1000
-let nmcmc = ref 1000
+
+let _ = 
+  nmcmc := 1000
 
 let gn_args = 
   [("-o", Arg.Set_string outfile,
     sprintf "file file for output (default %s)" !outfile);
    ("-nlive", Arg.Set_int nlive,
     sprintf "n number of live points (default %d)" !nlive);
-   ("-nmcmc", Arg.Set_int nmcmc,
-    sprintf "n number of MCMC samples in prior draw (default %d)" !nmcmc);
    ("-numbin", Arg.Set_int numbin,
     sprintf "nbin number of bins to use (default %d)" !numbin)]
 
@@ -31,6 +31,7 @@ let _ =
   let msamples = Masses.generate_samples !high_m !nmsamp in 
   let log_likelihood musig = log_likelihood msamples musig in 
   let draw_prior () = draw_prior !numbin () in 
+    Printf.printf "nlive = %d, nmcmc = %d\n%!" !nlive !nmcmc;
   let nested_results = 
     Nested.nested_evidence 
       ~nlive:!nlive

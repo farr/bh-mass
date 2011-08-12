@@ -5,15 +5,14 @@ open Stats
 
 let outfile = ref "exp-cutoff.nested"
 let nlive = ref 1000
-let nmcmc = ref 1000
+let _ = 
+  nmcmc := 1000
 
 let gn_args = 
   [("-o", Arg.Set_string outfile,
     sprintf "file file for output (default %s)" !outfile);
    ("-nlive", Arg.Set_int nlive,
-    sprintf "n number of live points (default %d)" !nlive);
-   ("-nmcmc", Arg.Set_int nmcmc,
-    sprintf "n number of MCMC samples in prior draw (default %d)" !nmcmc)]
+    sprintf "n number of live points (default %d)" !nlive)]
 
 let options = 
   Arg.align (base_opts @ gn_args)
